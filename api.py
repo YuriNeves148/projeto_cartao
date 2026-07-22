@@ -231,8 +231,25 @@ def exclui_compra():
 
     return jsonify({"success":"elemento excluido"}), 200
 
+@app.route("/compra/verifica_input/<tipo>")
+def buscar(tipo):
+    dado = request.args.get("q", "")
 
+    conexao = conecta_banco()
+    cursor = conexao.cursor()
 
+    if tipo == "nome_pessoa":
+        cursor.execute("SELECT nome FROM pessoa WHERE nome LIKE %s LIMIT 10", (f"%{dado}%",))
+    else:
+        return jsonify([]), 400
+
+    resultado = [linha[0] for linha in cursor.fetchall()]
+
+    cursor.close()
+    conexao.close()
+
+    return jsonify(resultado)
+    
 
 
 

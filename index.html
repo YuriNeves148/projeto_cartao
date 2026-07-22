@@ -158,9 +158,9 @@
                   id="nav_codigo"
                   readonly
                 />
-                <!-- aparecerá o código quando quiser editar a compra -->
                 <input type="date" placeholder="data da compra" id="nav_data" />
                 <input placeholder="quem comprou" id="nav_quem" />
+                <ul class="pesquisa_nome" id="pesquisa_pessoa"></ul>
                 <input placeholder="banco utilizado" id="nav_banco" />
                 <input
                   placeholder="loja ou site feita a compra"
@@ -246,6 +246,11 @@
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         historico_compra("hist_lista_cont");
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        busca_nome_pessoa("pesquisa_pessoa");
       });
     </script>
   </body>

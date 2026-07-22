@@ -68,6 +68,9 @@ let valor_totalEditandoCompra = null;
 let qtd_parcelaEditandoCompra = null;
 const btn_excluir_compra = document.getElementById("btn_excluir_compra");
 const btn_apagar_inputs = document.getElementById("btn_apagar_inputs");
+// para preencher campos da compra
+const busca_nome_pessoa = document.getElementById("nav_quem");
+const lista_pesquisa_pessoa = document.getElementById("pesquisa_pessoa");
 
 async function lista_historico() {
   const resposta = await fetch(`${api_url}/home/lista_historico`);
@@ -396,4 +399,21 @@ btn_apagar_inputs.addEventListener("click", () => {
   loja.value = "";
   valor_total.value = "";
   qtd_parcela.value = "";
+});
+
+busca_nome_pessoa.addEventListener("input", () => {
+  const nome_input = busca_nome_pessoa.value;
+
+  fetch(
+    `http://127.0.0.1:5000/compra/verifica_input/nome_pessoa?q=${nome_input}`,
+  )
+    .then((resp) => resp.json())
+    .then((dados) => {
+      lista_pesquisa_pessoa.innerHTML = "";
+      dados.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        lista_pesquisa_pessoa.appendChild(li);
+      });
+    });
 });
