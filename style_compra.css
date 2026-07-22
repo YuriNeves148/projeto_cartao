@@ -1,0 +1,265 @@
+/* =========================================================
+   SEÇÃO: sec_compra
+   Segue o mesmo padrão visual do CSS da home (cores, bordas,
+   raios, paddings e transições), só que aplicado à estrutura
+   desta seção.
+   ========================================================= */
+
+#fundo_compra {
+  width: 100%;
+}
+
+/* grid principal: coluna esquerda (formulário) ocupa as duas
+   linhas; coluna direita fica com histórico em cima e os
+   botões de excluir/reembolso embaixo */
+#fundo_nav {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ---------- coluna esquerda: formulário de compra ---------- */
+#nav_adiciona_compra {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 2.5px solid #1a1a1a;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+#nav_adiciona_compra input {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #1a1a1a;
+  background-color: #ffffff;
+  border: 2px solid #1a1a1a;
+  border-radius: 14px;
+  padding: 22px 12px;
+  text-align: center;
+  text-transform: lowercase;
+  transition: background-color 0.15s ease;
+}
+
+#nav_adiciona_compra input::placeholder {
+  color: #1a1a1a;
+  opacity: 1;
+}
+
+#nav_adiciona_compra input:disabled {
+  background-color: #e4e4e4;
+  cursor: not-allowed;
+}
+
+#nav_adiciona_compra input:focus {
+  outline: none;
+  background-color: #f0f0f0;
+}
+
+#salvar_compra {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #1a1a1a;
+  background-color: #ffffff;
+  border: 2px solid #2f6fed;
+  border-radius: 14px;
+  padding: 22px 12px;
+  cursor: pointer;
+  text-transform: lowercase;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+#salvar_compra:hover {
+  background-color: #eaf1ff;
+  transform: translateY(-1px);
+}
+
+#salvar_compra:active {
+  transform: translateY(0);
+  background-color: #d9e6ff;
+}
+
+/* ---------- coluna direita: histórico de compras ---------- */
+#fundo_hist_compra {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border: 2.5px solid #1a1a1a;
+  border-radius: 18px;
+  padding: 20px;
+}
+
+#fundo_hist_compra > nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 2px solid #1a1a1a;
+  border-radius: 14px;
+  padding: 14px 18px;
+}
+
+#btn_edita_compra {
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #1a1a1a;
+  background-color: #ffffff;
+  border: 2px solid #1a1a1a;
+  border-radius: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  text-transform: lowercase;
+  white-space: nowrap;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+#btn_edita_compra:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+#btn_edita_compra:active {
+  transform: translateY(0);
+  background-color: #e4e4e4;
+}
+
+#fundo_hist_compra > nav h1 {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+#fundo_hist_conteudo {
+  border: 2px solid #1a1a1a;
+  border-radius: 14px;
+  padding: 14px 18px;
+  min-height: 250px;
+}
+#cabecalho_lista_hist {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  text-align: center;
+  padding-bottom: 10px;
+  overflow-y: auto;
+}
+
+#cabecalho_lista_hist span {
+  font-weight: bold;
+}
+
+#hist_lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 310px;
+  overflow-y: auto;
+}
+
+#hist_lista li {
+  gap: 10px;
+  align-items: center;
+  font-size: 18px;
+  padding: 5px;
+  word-break: break-all;
+}
+
+/* caso a primeira <li> seja usada como cabeçalho
+   (código | data | quem | banco | onde | valor total | parcelas) */
+
+#hist_lista_cont {
+  flex: 1;
+  max-height: 450px;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#hist_lista_cont li {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  align-items: center;
+  text-align: center;
+}
+
+/* ---------- rodapé: excluir / reembolso ---------- */
+#fundo_baixo {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+#conteudo_fundo_baixo {
+  display: flex;
+  gap: 16px;
+}
+
+#conteudo_fundo_baixo button {
+  flex: 1;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #1a1a1a;
+  background-color: #ffffff;
+  border: 2px solid #b3261e;
+  border-radius: 14px;
+  padding: 18px 12px;
+  cursor: pointer;
+  text-transform: lowercase;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+#conteudo_fundo_baixo button:hover {
+  background-color: #fdeceb;
+  transform: translateY(-1px);
+}
+
+#conteudo_fundo_baixo button:active {
+  transform: translateY(0);
+  background-color: #f9d7d4;
+}
+
+/* RESPONSIVO */
+@media (max-width: 800px) {
+  #fundo_nav {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+
+  #nav_adiciona_compra {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  #fundo_hist_compra {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  #fundo_baixo {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  #hist_lista li {
+    grid-template-columns: 1fr;
+  }
+
+  #conteudo_fundo_baixo {
+    flex-direction: column;
+  }
+}

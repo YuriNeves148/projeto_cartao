@@ -1,0 +1,254 @@
+.pagina {
+  display: none;
+}
+.pagina.ativa {
+  display: block;
+  & h3 {
+    font-size: 25px;
+    text-align: center;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Comic Sans MS", "Segoe UI", sans-serif;
+  color: #1a1a1a;
+  background-color: #444444;
+  background-image: radial-gradient(#9b9b9b 1px, transparent 1px);
+  background-size: 22px 22px;
+  padding: 30px;
+}
+
+#fundo {
+  max-width: 1500px;
+  margin: 0 auto;
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  border: 3px solid #1a1a1a;
+  border-radius: 24px;
+  padding: 20px;
+  background-color: #b3b3b3;
+}
+
+#container_section {
+  flex: 0 0 220px;
+  border: 2.5px solid #1a1a1a;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+#botoes_section nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+
+#botoes_section nav button {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #1a1a1a;
+  background-color: #ffffff;
+  border: 2px solid #1a1a1a;
+  border-radius: 14px;
+  padding: 22px 12px;
+  cursor: pointer;
+  text-transform: lowercase;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+#botoes_section nav button:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+#botoes_section nav button:active {
+  transform: translateY(0);
+  background-color: #e4e4e4;
+}
+
+#conteudo_section {
+  flex: 1;
+  border: 2.5px solid #1a1a1a;
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.pagina {
+  width: 100%;
+}
+
+/* título "área home" / "área section X" fica escondido visualmente
+   pra não conflitar com o esboço, mas continua acessível */
+.pagina > h3,
+.pagina > label {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+
+#fundo_home {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* =========================================================
+   BLOCO SUPERIOR: cabeçalho do mês + faturas (nubank/c6)
+   ========================================================= */
+#informacoes {
+  border: 2px solid #1a1a1a;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+#home {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* linha: MÊS ATUAL | ESCOLHER MÊS */
+#cabecalho_home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 14px;
+  border: 2px solid #1a1a1a;
+  border-radius: 14px;
+  padding: 14px 18px;
+
+  & p {
+    font-weight: bold;
+  }
+}
+
+#escolha_mes {
+  font-family: inherit;
+  font-size: 0.95rem;
+  border: 2px solid #1a1a1a;
+  border-radius: 10px;
+  padding: 8px 16px;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+/* linhas: FATURA NUBANK | valor  /  FATURA C6 | valor */
+#nubank,
+#c6 {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/*  VERIFICAR  */
+#nubank,
+#c6 {
+  flex: 1;
+  text-align: center;
+  font-weight: bold;
+  border: 2px solid #1a1a1a;
+  border-radius: 14px;
+  padding: 18px 12px;
+  background-color: #ffffff;
+}
+
+/* segunda label de cada linha (o valor) um pouco mais discreta */
+#nubank label:last-child,
+#c6 label:last-child {
+  font-weight: normal;
+}
+
+/* tabela / lista de compras (equivalente ao "data | nome | banco | ...") */
+.conteudo_historico {
+  border: 2px solid #1a1a1a;
+  border-radius: 14px;
+  padding: 14px 18px;
+  min-height: 250px;
+}
+
+.conteudo_historico section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 310px;
+  overflow-y: auto;
+  & li {
+    font-size: 18px;
+    padding: 5px;
+  }
+}
+
+#lista_historico li {
+  display: grid;
+  grid-template-columns: 100px 120px 180px 150px 170px 125px 100px;
+  word-break: break-all;
+  gap: 10px;
+  align-items: center;
+}
+
+#sumario_historico {
+  display: grid;
+  padding-top: 15px;
+  margin-bottom: 9px;
+  grid-template-columns: 100px 120px 180px 150px 170px 125px 190px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* linha genérica de item de compra, caso você monte cada item como
+   uma div/row dentro de <section> */
+.conteudo_historico #linha_compra {
+  display: grid;
+  gap: 10px;
+  padding: 10px 6px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.conteudo_historico .linha_compra:last-child {
+  border-bottom: none;
+}
+
+/* RESPONSIVO */
+@media (max-width: 800px) {
+  #fundo {
+    flex-direction: column;
+  }
+
+  #container_section {
+    flex: none;
+  }
+
+  #botoes_section nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  #botoes_section nav button {
+    flex: 1 1 45%;
+  }
+
+  #cabecalho_home,
+  #nubank,
+  #c6 {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #area_historico nav button {
+    margin-left: 0;
+  }
+}

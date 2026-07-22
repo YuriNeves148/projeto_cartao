@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style_home.css" />
+    <link rel="stylesheet" href="style_criacao.css" />
+    <link rel="stylesheet" href="style_compra.css" />
+  </head>
+  <body>
+    <div id="fundo">
+      <div id="container_section">
+        <div id="botoes_section">
+          <nav>
+            <button onclick="mostrar('sec_home')">área home</button>
+            <button onclick="mostrar('sec_criacao')">área de criação</button>
+            <button onclick="mostrar('sec_fatura')">fatura</button>
+            <button onclick="mostrar('sec_compra')">área de compras</button>
+          </nav>
+        </div>
+      </div>
+      <div id="conteudo_section">
+        <section id="sec_home" class="pagina">
+          <h3>ÁREA HOME</h3>
+          <div id="fundo_home">
+            <div id="informacoes">
+              <div id="home">
+                <nav id="cabecalho_home">
+                  <p>Escolha o mês:</p>
+                  <select name="sec_mes" id="escolha_mes">
+                    <option value="0">Janeiro</option>
+                    <option value="1">Fevereiro</option>
+                    <option value="2">Março</option>
+                    <option value="3">Abril</option>
+                    <option value="4">Maio</option>
+                    <option value="5">Junho</option>
+                    <option value="6">Julho</option>
+                    <option value="7">Agosto</option>
+                    <option value="8">Setembro</option>
+                    <option value="9">Outubro</option>
+                    <option value="10">Novembro</option>
+                    <option value="11">Dezembro</option>
+                  </select>
+                </nav>
+                <div id="nubank">
+                  <label>fatura nubank: </label>
+                  <section>
+                    <ul id="valor_nubank"></ul>
+                  </section>
+                </div>
+                <div id="c6">
+                  <label>fatura C6: </label>
+                  <section>
+                    <ul id="valor_c6"></ul>
+                  </section>
+                </div>
+              </div>
+            </div>
+            <div id="historico_fundo">
+              <div class="conteudo_historico">
+                <h3>histórico de compras</h3>
+                <div id="sumario_historico">
+                  <p>data compra</p>
+                  <p>nome</p>
+                  <p>banco</p>
+                  <p>onde</p>
+                  <p>valor total</p>
+                  <p>qtd. parcela</p>
+                  <p>valor parcela</p>
+                </div>
+                <section>
+                  <div id="linha_compra">
+                    <ul id="lista_historico"></ul>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="sec_criacao" class="pagina">
+          <div id="criacao">
+            <div id="adicionar_entidade">
+              <h3>ÁREA DE CRIAÇÃO, EDIÇÃO E EXCLUSÃO</h3>
+              <nav id="nav_adicionar_entidade">
+                <div id="nav_input">
+                  <input
+                    type="text"
+                    id="input_pessoa"
+                    placeholder="digite o nome da pessoa"
+                  />
+                  <input
+                    type="text"
+                    id="input_banco"
+                    placeholder="digite o nome do banco"
+                  />
+                  <input
+                    type="text"
+                    id="input_loja"
+                    placeholder="digite onome de loja ou site"
+                  />
+                </div>
+                <div id="nav_adicionar" class="nav_botoes">
+                  <button id="btn_adicionar_pessoa">adicionar pessoa</button>
+                  <button id="btn_adicionar_banco">adicionar banco</button>
+                  <button id="btn_adicionar_loja">adicionar loja</button>
+                </div>
+                <div id="nav_editar" class="nav_botoes">
+                  <button id="editar_pessoa">editar pessoa</button>
+                  <button id="editar_banco">editar banco</button>
+                  <button id="editar_loja">editar loja</button>
+                </div>
+                <div
+                  id="nav_excluir"
+                  class="nav_botoes"
+                  class="nav_botoes_excluir"
+                >
+                  <button id="excluir_pessoa">excluir pessoa</button>
+                  <button id="excluir_banco">excluir banco</button>
+                  <button id="excluir_loja">excluir loja</button>
+                </div>
+              </nav>
+            </div>
+          </div>
+          <div id="area_lista">
+            <h3>LISTAS</h3>
+            <div id="sec_lista">
+              <div class="coluna_lista">
+                <h4>pessoas</h4>
+                <section id="sec_pessoa">
+                  <ul id="lista_pessoa_cont" class="linha_lista"></ul>
+                </section>
+              </div>
+              <div class="coluna_lista">
+                <h4>bancos</h4>
+                <section id="sec_banco">
+                  <ul id="lista_banco_cont" class="linha_lista"></ul>
+                </section>
+              </div>
+              <div class="coluna_lista">
+                <h4>lojas</h4>
+                <section id="sec_loja">
+                  <ul id="lista_loja_cont" class="linha_lista"></ul>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="sec_fatura" class="pagina">
+          <label>área section FATURA</label>
+        </section>
+        <section id="sec_compra" class="pagina">
+          <div id="fundo_compra">
+            <div id="fundo_nav">
+              <nav id="nav_adiciona_compra">
+                <input
+                  placeholder="codigo da compra"
+                  id="nav_codigo"
+                  readonly
+                />
+                <!-- aparecerá o código quando quiser editar a compra -->
+                <input type="date" placeholder="data da compra" id="nav_data" />
+                <input placeholder="quem comprou" id="nav_quem" />
+                <input placeholder="banco utilizado" id="nav_banco" />
+                <input
+                  placeholder="loja ou site feita a compra"
+                  id="nav_loja"
+                />
+                <input
+                  type="number"
+                  placeholder="valor total da compra"
+                  id="nav_valor_total"
+                />
+                <input
+                  type="number"
+                  placeholder="qtd. parcelas"
+                  id="nav_parcela"
+                />
+                <button id="salvar_compra">salvar compra</button>
+              </nav>
+              <div id="fundo_hist_compra">
+                <nav>
+                  <button id="btn_edita_compra">
+                    editar compra selecionada
+                  </button>
+                  <h1>histórico de compras</h1>
+                </nav>
+                <div id="fundo_hist_conteudo">
+                  <div id="cabecalho_lista_hist">
+                    <span id="cod">código</span>
+                    <span>data</span>
+                    <span>quem</span>
+                    <span>banco</span>
+                    <span>onde</span>
+                    <span>valor total</span>
+                    <span>parcelas</span>
+                    <span>valor parcela</span>
+                  </div>
+                  <ul id="hist_lista_cont"></ul>
+                </div>
+              </div>
+              <div id="fundo_baixo">
+                <nav id="conteudo_fundo_baixo">
+                  <button id="btn_apagar_inputs">apagar inputs</button>
+                  <button id="btn_excluir_compra">excluir compra</button>
+                  <button id="btn_reembolso">reembolso da compra</button>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+    <!--procurar como melhorar a aparicao dos resultados de listas-->
+    <script src="script.js"></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        mostrar("home");
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        lista_historico("home");
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        faturas("valor_nubank");
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        lista_pessoa_func("lista_pessoa_con");
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        lista_banco_func("lista_banco_con");
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        lista_loja_func("lista_loja_cont");
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        historico_compra("hist_lista_cont");
+      });
+    </script>
+  </body>
+</html>
