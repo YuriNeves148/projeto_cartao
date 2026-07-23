@@ -34,6 +34,7 @@ const listaa_historico = document.getElementById("lista_historico");
 const valor_fatura_nubank = document.getElementById("valor_nubank");
 const valor_fatura_c6 = document.getElementById("valor_c6");
 
+// área CRIAÇÃO
 // adicionar pessoa
 const input_pessoa = document.getElementById("input_pessoa");
 const btn_adicionar_pessoa = document.getElementById("btn_adicionar_pessoa");
@@ -43,15 +44,14 @@ const btn_adicionar_banco = document.getElementById("btn_adicionar_banco");
 // adicionar loja
 const btn_adicionar_loja = document.getElementById("btn_adicionar_loja");
 const input_loja = document.getElementById("input_loja");
-
-// lista área CRIAÇÃO (cont = conteudo)
+// exibe lista
 const lista_pessoa_cont = document.getElementById("lista_pessoa_cont");
 const lista_banco_cont = document.getElementById("lista_banco_cont");
 const lista_loja_cont = document.getElementById("lista_loja_cont");
 
 // lista área COMPRA
 const lista_compra_cont = document.getElementById("hist_lista_cont");
-const salvar_compra = document.getElementById("salvar_compra");
+const btn_salvar_compra = document.getElementById("salvar_compra");
 const codigo = document.getElementById("nav_codigo");
 const data = document.getElementById("nav_data");
 const nome = document.getElementById("nav_quem");
@@ -66,16 +66,29 @@ let bancoEditandoCompra = null;
 let lojaEditandoCompra = null;
 let valor_totalEditandoCompra = null;
 let qtd_parcelaEditandoCompra = null;
+//utilizado na funcao: busca_nome_pessoa
+const listaEditando = [
+  idEditandoCompra,
+  dataEditandoCompra,
+  nomeEditandoCompra,
+  bancoEditandoCompra,
+  valor_totalEditandoCompra,
+  lojaEditandoCompra,
+  qtd_parcelaEditandoCompra,
+];
 const btn_excluir_compra = document.getElementById("btn_excluir_compra");
 const btn_apagar_inputs = document.getElementById("btn_apagar_inputs");
 // para preencher campos da compra
 const busca_nome_pessoa = document.getElementById("nav_quem");
 const lista_pesquisa_pessoa = document.getElementById("pesquisa_pessoa");
+// para controlar as listas quando digitar o nome de uma pessoa, um banco ou loja
+const container_nome = document.querySelector(".campo_com_sugestao");
 
 // área FATURA
 const lista_fatura_nubank = document.getElementById("lista_fatura_nubank");
 const btn_buscar_nubank = document.getElementById("btn_buscar_nubank");
-
+const lista_fatura_c6 = document.getElementById("lista_fatura_c6");
+const btn_buscar_c6 = document.getElementById("btn_buscar_c6");
 // funções
 
 // área HOME
@@ -280,7 +293,7 @@ async function historico_compra() {
       loja.value = item.onde;
       valor_total.value = item.valor_total;
       qtd_parcela.value = item.qtd_parcela;
-
+      // opcao de melhora de codigo*
       idEditandoCompra = item.id_compra;
       dataEditandoCompra = dataFormato;
       nomeEditandoCompra = item.nome_pessoa;
@@ -288,12 +301,16 @@ async function historico_compra() {
       lojaEditandoCompra = item.onde;
       valor_totalEditandoCompra = item.valor_total;
       qtd_parcelaEditandoCompra = item.qtd_parcela;
+      console.log("Nome da pessoa selecionada: ", nomeEditandoCompra);
+
+      // a cada final de chamada
+      console.log(listaEditando.map(() => null));
     });
     lista_compra_cont.appendChild(novo_item);
   });
 }
 
-salvar_compra.addEventListener("click", async () => {
+btn_salvar_compra.addEventListener("click", async () => {
   valor_data = data.value.trim();
   valor_nome = nome.value.trim();
   valor_banco = banco.value.trim();
@@ -409,8 +426,14 @@ btn_apagar_inputs.addEventListener("click", () => {
 });
 
 busca_nome_pessoa.addEventListener("input", () => {
+  // checando se o input está vazio ou se clicou fora da lista
+  const verifica_nome = nome.value.trim();
+  if (verifica_nome === "") {
+    lista_pesquisa_pessoa.innerHTML = "";
+    return;
+  }
+  // mostra lista
   const nome_input = busca_nome_pessoa.value;
-
   fetch(
     `http://127.0.0.1:5000/compra/verifica_input/nome_pessoa?q=${nome_input}`,
   )
@@ -423,6 +446,22 @@ busca_nome_pessoa.addEventListener("input", () => {
         lista_pesquisa_pessoa.appendChild(li);
       });
     });
+  if (nome_input === "") {
+    lista_pesquisa_pessoa.value = "";
+  }
+});
+
+// apagar a lista de pesquisa quando clicar fora
+document.addEventListener("click", (evento) => {
+  const verifica = nome.value.trim();
+  if (verifica === "") {
+    lista_pesquisa_pessoa.innerHTML = "";
+    return;
+  }
+  // .contains() verifica se o elemento clicado está dentro do container
+  if (!container_nome.contains(evento.target)) {
+    lista_pesquisa_pessoa.innerHTML = "";
+  }
 });
 
 // área FATURA
@@ -434,7 +473,7 @@ async function lista_fatura_nubank_func() {
   }
   const dado = await resposta.json();
   lista_fatura_nubank.innerHTML = "";
-  console.log(dado);
+  //console.log(dado);
   dado.forEach((secao) => {
     const li = document.createElement("li");
     const data = new Date(secao.fatura_mes);
@@ -453,3 +492,28 @@ async function lista_fatura_nubank_func() {
   });
 }
 btn_buscar_nubank.addEventListener("click", lista_fatura_nubank_func);
+
+async function lista_fatura_c6_func() {
+  const resposta = await fetch(`${api_url}/fatura/lista_c6`);
+  if (!resposta.ok) {
+    alert("Não possivel se conectar com a API.");
+    return;
+  }
+  const dado = await resposta.json();
+  lista_fatura_nubank.innerHTML = "";
+  console.log(dado);
+  dado.forEach((secao) => {
+    const li = document.createElement("li");
+    const data = new Date(secao.fatura_mes);
+    const formataData = data.toLocaleDateString("pt-BR");
+    li.innerHTML = `
+    <span>${formataData}</span>
+    <span>${secao.nome}</span>
+    <span>${secao.onde}</span>
+    <span>${secao.parc_faltante} </span>
+    <span>${secao.valor_parcela}</span>
+    `;
+    lista_fatura_c6.appendChild(li);
+  });
+}
+btn_buscar_c6.addEventListener("click", lista_fatura_c6_func);

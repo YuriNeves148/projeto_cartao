@@ -55,7 +55,31 @@
   background-color: #e4e4e4;
   cursor: not-allowed;
 }
+.campo_com_sugestao {
+  position: relative; /* vira a "âncora" da lista */
+}
 
+#pesquisa_pessoa {
+  position: absolute;
+  top: 100%; /* gruda logo abaixo do input, sem precisar de padding chutado */
+  left: 0;
+  right: 0px; /* opcional: faz a lista ter a mesma largura do container */
+  margin-top: 6px; /* um respiro entre o input e a lista, no lugar do padding-top */
+
+  background-color: #d9e6ff;
+  width: 100px;
+  z-index: 10; /* valor mais folgado, pra garantir que fique por cima */
+  max-height: 100px;
+  overflow-y: auto; /* caso a lista de nomes fique grande */
+  list-style: none;
+  margin-left: 0;
+  padding: 10px 10px;
+  width: 100%;
+  border-radius: 8px;
+}
+#nav_quem {
+  width: 100%;
+}
 #nav_adiciona_compra input:focus {
   outline: none;
   background-color: #f0f0f0;

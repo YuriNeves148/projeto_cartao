@@ -137,12 +137,15 @@
 #conteudo_c6 {
   display: grid;
   grid-template-rows: 1fr auto;
-  height: 100%;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 #lista_fatura_c6 {
   flex: 1;
   overflow-y: auto;
+  border-top: 2px solid gray;
+  border-bottom: 2px solid black;
 }
 
 #lista_fatura_c6 li {
@@ -162,4 +165,5 @@
   padding: 14px 16px;
   border: 2px solid black;
   border-radius: 16px;
+  margin-top: 20px;
 }

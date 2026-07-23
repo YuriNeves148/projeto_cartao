@@ -272,7 +272,28 @@ def lista_fatura_nubank():
 
     return jsonify(fatura)
 
+@app.route("/fatura/lista_c6")
+def lista_fatura_c6():
+    conexao = conecta_banco()
+    cursor = conexao.cursor(dictionary=True)
+    try:
+        # fatura mes 10
+        sql = "SELECT pessoa.nome AS nome, lojasite.nome AS onde, parcela.data_vencimento AS fatura_mes, " \
+        "(compra.qtd_parcela - parcela.numero_parcela + 1) AS parc_faltante, " \
+        "parcela.valor_parcela FROM compra JOIN pessoa ON pessoa.id_pessoa = compra.id_pessoa " \
+        "JOIN lojasite ON lojasite.id_lojasite = compra.id_lojasite " \
+        "JOIN parcela ON parcela.id_compra = compra.id_compra " \
+        "WHERE parcela.data_vencimento >= '2028-06-01' AND parcela.data_vencimento <= '2028-10-31';"
+        cursor.execute(sql)
+        fatura = cursor.fetchall()
+        #print(fatura)
+    except Exception as e :
+        return jsonify({"erro": str(e)})
+    
+    cursor.close()
+    conexao.close()
 
+    return jsonify(fatura)
 
 
 if __name__ == "__main__":
