@@ -255,9 +255,15 @@ def lista_fatura_nubank():
     cursor = conexao.cursor(dictionary=True)
     try:
         # fatura mes 10
-        sql = "select pessoa.nome as nome, banco.nome as nome_banco, parcela.data_vencimento as fatura_mes from compra join pessoa on pessoa.id_pessoa = compra.id_pessoa join banco on banco.id_banco = compra.id_banco join parcela on parcela.id_compra = compra.id_compra where parcela.data_vencimento >= '2026-10-01' and parcela.data_vencimento <= '2026-10-31'";
+        sql = "SELECT pessoa.nome AS nome, lojasite.nome AS onde, parcela.data_vencimento AS fatura_mes, " \
+        "(compra.qtd_parcela - parcela.numero_parcela + 1) AS parc_faltante, " \
+        "parcela.valor_parcela FROM compra JOIN pessoa ON pessoa.id_pessoa = compra.id_pessoa " \
+        "JOIN lojasite ON lojasite.id_lojasite = compra.id_lojasite " \
+        "JOIN parcela ON parcela.id_compra = compra.id_compra " \
+        "WHERE parcela.data_vencimento >= '2028-06-01' AND parcela.data_vencimento <= '2028-10-31';"
         cursor.execute(sql)
         fatura = cursor.fetchall()
+        #print(fatura)
     except Exception as e :
         return jsonify({"erro": str(e)})
     

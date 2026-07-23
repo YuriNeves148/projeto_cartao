@@ -76,24 +76,9 @@ const lista_pesquisa_pessoa = document.getElementById("pesquisa_pessoa");
 const lista_fatura_nubank = document.getElementById("lista_fatura_nubank");
 const btn_buscar_nubank = document.getElementById("btn_buscar_nubank");
 
-// área FATURA
-async function lista_fatura_nubank_func() {
-  const resposta = await fetch(`${api_url}/fatura/lista_nubank`);
-  if (!resposta.ok) {
-    alert("Não possivel se conectar com a API.");
-    return;
-  }
-  const dado = await resposta.json();
-  lista_fatura_nubank.innerHTML = "";
-  console.log(dado);
-  dado.forEach((secao) => {
-    const li = document.createElement("li");
-    li.textContent = `${secao.fatura_mes} ${secao.nome}`;
-    lista_fatura_nubank.appendChild(li);
-  });
-}
-btn_buscar_nubank.addEventListener("click", lista_fatura_nubank_func);
+// funções
 
+// área HOME
 async function lista_historico() {
   const resposta = await fetch(`${api_url}/home/lista_historico`);
 
@@ -439,3 +424,32 @@ busca_nome_pessoa.addEventListener("input", () => {
       });
     });
 });
+
+// área FATURA
+async function lista_fatura_nubank_func() {
+  const resposta = await fetch(`${api_url}/fatura/lista_nubank`);
+  if (!resposta.ok) {
+    alert("Não possivel se conectar com a API.");
+    return;
+  }
+  const dado = await resposta.json();
+  lista_fatura_nubank.innerHTML = "";
+  console.log(dado);
+  dado.forEach((secao) => {
+    const li = document.createElement("li");
+    const data = new Date(secao.fatura_mes);
+    const formataData = data.toLocaleDateString("pt-BR");
+    li.innerHTML = `
+    <span>${formataData}</span>
+    <span>${secao.nome}</span>
+    <span>${secao.onde}</span>
+    <span>${secao.parc_faltante} </span>
+    <span>${secao.valor_parcela}</span>
+    `;
+
+    //li.textContent = `${formataData} ${secao.nome} ${secao.onde} ${secao.parc_faltante} ${secao.valor_parcela}`;
+
+    lista_fatura_nubank.appendChild(li);
+  });
+}
+btn_buscar_nubank.addEventListener("click", lista_fatura_nubank_func);
