@@ -1,0 +1,130 @@
+#fundo_fatura {
+  display: flex;
+  flex-direction: column;
+}
+#secao_cartao {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  min-height: 81vh;
+  text-align: center;
+}
+/* área NUBANK */
+#secao_nubank {
+  border: 2px solid black;
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+#cabecalho_nubank {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 14px;
+  & input {
+    border-radius: 14px;
+    padding: 8px;
+    width: 60%;
+    margin: 0 auto;
+  }
+  & button {
+    border-radius: 14px;
+    padding: 6px;
+    width: 60%;
+    margin: 0 auto;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  & button:hover {
+    opacity: 0.8;
+  }
+}
+#fundo_fatura_nubank {
+  border: 2px solid black;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+}
+#legenda_nubank {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  text-align: center;
+}
+#conteudo_nubank {
+  display: grid;
+  grid-template-rows: 70% 30%;
+  min-height: 32vh;
+}
+/* falta estilizar a lista em si */
+#lista_fatura_nubank li {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+#fundo_valor_fatura_nubank {
+  border: 2px solid black;
+  border-radius: 16px;
+  padding: 14px 16px;
+  bottom: 0;
+}
+/* área C6 */
+#secao_c6 {
+  border: 2px solid black;
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+
+#cabecalho_c6 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 14px;
+  & input {
+    border-radius: 14px;
+    padding: 8px;
+    width: 60%;
+    margin: 0 auto;
+  }
+  & button {
+    border-radius: 14px;
+    padding: 6px;
+    width: 60%;
+    margin: 0 auto;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  & button:hover {
+    opacity: 0.8;
+  }
+}
+
+#fundo_fatura_c6 {
+  border: 2px solid black;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+}
+
+#legenda_c6 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  text-align: center;
+}
+
+#conteudo_c6 {
+  display: grid;
+  grid-template-rows: 70% 30%;
+  min-height: 32vh;
+}
+
+/* falta estilizar a lista em si */
+#lista_fatura_c6 li {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+#fundo_valor_fatura_c6 {
+  border: 2px solid black;
+  border-radius: 16px;
+  padding: 14px 16px;
+  bottom: 0;
+}

@@ -72,6 +72,28 @@ const btn_apagar_inputs = document.getElementById("btn_apagar_inputs");
 const busca_nome_pessoa = document.getElementById("nav_quem");
 const lista_pesquisa_pessoa = document.getElementById("pesquisa_pessoa");
 
+// área FATURA
+const lista_fatura_nubank = document.getElementById("lista_fatura_nubank");
+const btn_buscar_nubank = document.getElementById("btn_buscar_nubank");
+
+// área FATURA
+async function lista_fatura_nubank_func() {
+  const resposta = await fetch(`${api_url}/fatura/lista_nubank`);
+  if (!resposta.ok) {
+    alert("Não possivel se conectar com a API.");
+    return;
+  }
+  const dado = await resposta.json();
+  lista_fatura_nubank.innerHTML = "";
+  console.log(dado);
+  dado.forEach((secao) => {
+    const li = document.createElement("li");
+    li.textContent = `${secao.fatura_mes} ${secao.nome}`;
+    lista_fatura_nubank.appendChild(li);
+  });
+}
+btn_buscar_nubank.addEventListener("click", lista_fatura_nubank_func);
+
 async function lista_historico() {
   const resposta = await fetch(`${api_url}/home/lista_historico`);
 

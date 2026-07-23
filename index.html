@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style_home.css" />
     <link rel="stylesheet" href="style_criacao.css" />
     <link rel="stylesheet" href="style_compra.css" />
+    <link rel="stylesheet" href="style_fatura.css" />
   </head>
   <body>
     <div id="fundo">
@@ -147,7 +148,60 @@
           </div>
         </section>
         <section id="sec_fatura" class="pagina">
-          <label>área section FATURA</label>
+          <div id="fundo_fatura">
+            <div id="secao_cartao">
+              <div id="secao_nubank">
+                <h2>CARTÃO NUBANK</h2>
+                <nav id="cabecalho_nubank">
+                  <input type="date" />
+                  <button id="btn_buscar_nubank">buscar</button>
+                </nav>
+                <div id="fundo_fatura_nubank">
+                  <div id="legenda_nubank">
+                    <span><strong>data</strong></span>
+                    <span><strong>nome</strong></span>
+                    <span><strong>onde</strong></span>
+                    <span><strong>parc. faltantes</strong></span>
+                    <span><strong>valor da parcela</strong></span>
+                  </div>
+                  <div id="conteudo_nubank">
+                    <ul id="lista_fatura_nubank"></ul>
+                    <!-- lista vinda do js -->
+                    <div id="fundo_valor_fatura_nubank">
+                      <label>valor da fatura: </label>
+                      <ul id="valor_fatura_nubank"></ul>
+                      <!-- criacao de li dentro do js com a soma dos valores -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="secao_c6">
+                <h2>CARTÃO C6</h2>
+                <nav id="cabecalho_c6">
+                  <input type="date" />
+                  <button id="btn_buscar_c6">buscar</button>
+                </nav>
+                <div id="fundo_fatura_c6">
+                  <div id="legenda_c6">
+                    <span>data</span>
+                    <span>nome</span>
+                    <span>onde</span>
+                    <span>parc. faltantes</span>
+                    <span>valor da parcela</span>
+                  </div>
+                  <div id="conteudo_c6">
+                    <ul id="lista_fatura_c6"></ul>
+                    <!-- lista vinda do js -->
+                    <div id="fundo_valor_fatura_c6">
+                      <label>valor da fatura: </label>
+                      <ul id="valor_fatura_c6"></ul>
+                      <!-- criacao de li dentro do js com a soma dos valores -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
         <section id="sec_compra" class="pagina">
           <div id="fundo_compra">
@@ -212,7 +266,7 @@
       </div>
     </div>
     <!--procurar como melhorar a aparicao dos resultados de listas-->
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         mostrar("home");
@@ -246,11 +300,6 @@
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         historico_compra("hist_lista_cont");
-      });
-    </script>
-    <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        busca_nome_pessoa("pesquisa_pessoa");
       });
     </script>
   </body>

@@ -150,7 +150,6 @@ def lista_loja():
 
     return jsonify(dado)
 
-
 @app.route("/compra/lista")
 def lista_compra():
     conexao = conecta_banco()
@@ -250,6 +249,23 @@ def buscar(tipo):
 
     return jsonify(resultado)
     
+@app.route("/fatura/lista_nubank")
+def lista_fatura_nubank():
+    conexao = conecta_banco()
+    cursor = conexao.cursor(dictionary=True)
+    try:
+        # fatura mes 10
+        sql = "select pessoa.nome as nome, banco.nome as nome_banco, parcela.data_vencimento as fatura_mes from compra join pessoa on pessoa.id_pessoa = compra.id_pessoa join banco on banco.id_banco = compra.id_banco join parcela on parcela.id_compra = compra.id_compra where parcela.data_vencimento >= '2026-10-01' and parcela.data_vencimento <= '2026-10-31'";
+        cursor.execute(sql)
+        fatura = cursor.fetchall()
+    except Exception as e :
+        return jsonify({"erro": str(e)})
+    
+    cursor.close()
+    conexao.close()
+
+    return jsonify(fatura)
+
 
 
 
