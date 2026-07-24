@@ -302,8 +302,7 @@ async function historico_compra() {
       valor_totalEditandoCompra = item.valor_total;
       qtd_parcelaEditandoCompra = item.qtd_parcela;
       console.log("Nome da pessoa selecionada: ", nomeEditandoCompra);
-
-      // a cada final de chamada
+      // a cada final de chamada os valores recebem null (como na declaracao inicial)
       console.log(listaEditando.map(() => null));
     });
     lista_compra_cont.appendChild(novo_item);
@@ -434,9 +433,7 @@ busca_nome_pessoa.addEventListener("input", () => {
   }
   // mostra lista
   const nome_input = busca_nome_pessoa.value;
-  fetch(
-    `http://127.0.0.1:5000/compra/verifica_input/nome_pessoa?q=${nome_input}`,
-  )
+  fetch(`${api_url}/compra/verifica_input/nome_pessoa?q=${nome_input}`)
     .then((resp) => resp.json())
     .then((dados) => {
       lista_pesquisa_pessoa.innerHTML = "";
@@ -444,6 +441,11 @@ busca_nome_pessoa.addEventListener("input", () => {
         const li = document.createElement("li");
         li.textContent = item;
         lista_pesquisa_pessoa.appendChild(li);
+
+        li.addEventListener("click", () => {
+          nome.value = item;
+          lista_pesquisa_pessoa.innerHTML = "";
+        });
       });
     });
   if (nome_input === "") {

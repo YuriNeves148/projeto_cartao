@@ -243,7 +243,7 @@ def buscar(tipo):
         return jsonify([]), 400
 
     resultado = [linha[0] for linha in cursor.fetchall()]
-
+    print(resultado)
     cursor.close()
     conexao.close()
 
