@@ -232,13 +232,19 @@ def exclui_compra():
 
 @app.route("/compra/verifica_input/<tipo>")
 def buscar(tipo):
+    print("tipo recebido: ", tipo)
     dado = request.args.get("q", "")
-
+    print("digitado: ", dado)
     conexao = conecta_banco()
     cursor = conexao.cursor()
 
-    if tipo == "nome_pessoa":
+    if tipo == "pessoa":
         cursor.execute("SELECT nome FROM pessoa WHERE nome LIKE %s LIMIT 10", (f"%{dado}%",))
+    elif tipo == "banco":
+        cursor.execute("SELECT nome FROM banco WHERE nome LIKE %s LIMIT 10", (f"%{dado}%",))
+    elif tipo == "loja":
+        cursor.execute("SELECT nome FROM lojasite WHERE nome LIKE %s LIMIT 10", (f"%{dado}%",))
+
     else:
         return jsonify([]), 400
 

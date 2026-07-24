@@ -59,14 +59,13 @@ const banco = document.getElementById("nav_banco");
 const loja = document.getElementById("nav_loja");
 const valor_total = document.getElementById("nav_valor_total");
 const qtd_parcela = document.getElementById("nav_parcela");
-let idEditandoCompra = null;
+let idEditandoCompra = null; // melhorar codigo*
 let dataEditandoCompra = null;
 let nomeEditandoCompra = null;
 let bancoEditandoCompra = null;
 let lojaEditandoCompra = null;
 let valor_totalEditandoCompra = null;
 let qtd_parcelaEditandoCompra = null;
-//utilizado na funcao: busca_nome_pessoa
 const listaEditando = [
   idEditandoCompra,
   dataEditandoCompra,
@@ -78,11 +77,13 @@ const listaEditando = [
 ];
 const btn_excluir_compra = document.getElementById("btn_excluir_compra");
 const btn_apagar_inputs = document.getElementById("btn_apagar_inputs");
-// para preencher campos da compra
-const busca_nome_pessoa = document.getElementById("nav_quem");
+// lista ao pesquisar pelos nomes
 const lista_pesquisa_pessoa = document.getElementById("pesquisa_pessoa");
+const lista_pesquisa_banco = document.getElementById("pesquisa_banco");
+const lista_pesquisa_loja = document.getElementById("pesquisa_loja");
 // para controlar as listas quando digitar o nome de uma pessoa, um banco ou loja
 const container_nome = document.querySelector(".campo_com_sugestao");
+const teste_lista = document.querySelectorAll(".lista_pesquisa");
 
 // área FATURA
 const lista_fatura_nubank = document.getElementById("lista_fatura_nubank");
@@ -424,45 +425,58 @@ btn_apagar_inputs.addEventListener("click", () => {
   qtd_parcela.value = "";
 });
 
-busca_nome_pessoa.addEventListener("input", () => {
-  // checando se o input está vazio ou se clicou fora da lista
-  const verifica_nome = nome.value.trim();
-  if (verifica_nome === "") {
-    lista_pesquisa_pessoa.innerHTML = "";
-    return;
-  }
-  // mostra lista
-  const nome_input = busca_nome_pessoa.value;
-  fetch(`${api_url}/compra/verifica_input/nome_pessoa?q=${nome_input}`)
-    .then((resp) => resp.json())
-    .then((dados) => {
-      lista_pesquisa_pessoa.innerHTML = "";
-      dados.forEach((item) => {
-        const li = document.createElement("li");
-        li.textContent = item;
-        lista_pesquisa_pessoa.appendChild(li);
+function configurarBusca(input, lista, tipo) {
+  input.addEventListener("input", () => {
+    const texto = input.value.trim();
 
-        li.addEventListener("click", () => {
-          nome.value = item;
-          lista_pesquisa_pessoa.innerHTML = "";
+    if (texto === "") {
+      lista.innerHTML = "";
+      lista.style.display = "none";
+      return;
+    }
+
+    fetch(`${api_url}/compra/verifica_input/${tipo}?q=${texto}`)
+      .then((resposta) => resposta.json())
+      .then((dado) => {
+        lista.innerHTML = "";
+        if (dado.length === 0) {
+          lista.style.display = "none";
+          return;
+        }
+        lista.style.display = "block";
+
+        dado.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          li.addEventListener("click", () => {
+            input.value = item;
+            lista.innerHTML = "";
+            lista.style.display = "none";
+          });
+          lista.appendChild(li);
         });
       });
-    });
-  if (nome_input === "") {
-    lista_pesquisa_pessoa.value = "";
-  }
-});
+  });
+}
+// dados que o flask receberá
+configurarBusca(nome, lista_pesquisa_pessoa, "pessoa");
+configurarBusca(banco, lista_pesquisa_banco, "banco");
+configurarBusca(loja, lista_pesquisa_loja, "loja");
 
 // apagar a lista de pesquisa quando clicar fora
 document.addEventListener("click", (evento) => {
   const verifica = nome.value.trim();
   if (verifica === "") {
     lista_pesquisa_pessoa.innerHTML = "";
+
     return;
   }
   // .contains() verifica se o elemento clicado está dentro do container
   if (!container_nome.contains(evento.target)) {
     lista_pesquisa_pessoa.innerHTML = "";
+    lista_pesquisa_pessoa.style.display = "none";
+    lista_pesquisa_banco.style.display = "none";
+    lista_pesquisa_loja.style.display = "none";
   }
 });
 
