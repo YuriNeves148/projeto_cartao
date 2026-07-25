@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="style_home.css" />
-    <link rel="stylesheet" href="style_criacao.css" />
-    <link rel="stylesheet" href="style_compra.css" />
-    <link rel="stylesheet" href="style_fatura.css" />
+    <link rel="stylesheet" href="./estilizacao/style_home.css" />
+    <link rel="stylesheet" href="./estilizacao/style_criacao.css" />
+    <link rel="stylesheet" href="./estilizacao/style_compra.css" />
+    <link rel="stylesheet" href="./estilizacao/style_fatura.css" />
   </head>
   <body>
     <div id="fundo">
@@ -213,6 +213,7 @@
                   readonly
                 />
                 <input type="date" placeholder="data da compra" id="nav_data" />
+
                 <div class="campo_com_sugestao">
                   <input placeholder="quem comprou" id="nav_quem" />
                   <ul id="pesquisa_pessoa" class="lista_pesquisa"></ul>
@@ -274,15 +275,11 @@
       </div>
     </div>
     <!--procurar como melhorar a aparicao dos resultados de listas-->
-    <script src="script.js" defer></script>
+    <script type="module" src="script.js" defer></script>
+    <!-- área home -->
     <script>
       window.addEventListener("DOMContentLoaded", () => {
-        mostrar("home");
-      });
-    </script>
-    <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        lista_historico("home");
+        lista_historico("lista_pessoa_con");
       });
     </script>
     <script>
@@ -290,9 +287,10 @@
         faturas("valor_nubank");
       });
     </script>
+    <!-- area de criação -->
     <script>
       window.addEventListener("DOMContentLoaded", () => {
-        lista_pessoa_func("lista_pessoa_con");
+        lista_pessoa_func("lista_historico");
       });
     </script>
     <script>
@@ -305,6 +303,7 @@
         lista_loja_func("lista_loja_cont");
       });
     </script>
+    <!-- area de compra -->
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         historico_compra("hist_lista_cont");

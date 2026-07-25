@@ -161,8 +161,8 @@ def lista_compra():
     "from compra join pessoa on pessoa.id_pessoa = compra.id_pessoa " \
     "join banco on compra.id_banco = banco.id_banco " \
     "join lojasite on compra.id_lojasite = lojasite.id_lojasite " \
-    "join parcela on compra.id_compra = parcela.id_parcela " \
-    "group by compra.id_compra;"
+    "join parcela on compra.id_compra = parcela.id_parcela;" 
+    
 
     cursor.execute(sql)
     dados = cursor.fetchall()
@@ -172,6 +172,8 @@ def lista_compra():
 @app.route("/compra/salvar", methods=["POST"])
 def salvar_compra():
     dados = request.get_json()
+    print(dados)
+    dados = request.get_json()
     data = dados.get("data_comp")
     nome = dados.get("nome_comp")
     banco = dados.get("banco_comp")
@@ -180,7 +182,9 @@ def salvar_compra():
     qtd_parcela = dados.get("qtd_parcela_comp")
 
     conexao = conecta_banco()
-    cursor = conexao.cursor()
+    cursor = conexao.cursor(buffered=True)
+    #print("VALOR TOTAL: ", valor_total)
+    #print("PARCELAS: ", qtd_parcela)
 
     # encontrando id do nome
     sql_id_nome = "SELECT id_pessoa FROM pessoa WHERE nome = %s"
@@ -266,10 +270,12 @@ def lista_fatura_nubank():
         "parcela.valor_parcela FROM compra JOIN pessoa ON pessoa.id_pessoa = compra.id_pessoa " \
         "JOIN lojasite ON lojasite.id_lojasite = compra.id_lojasite " \
         "JOIN parcela ON parcela.id_compra = compra.id_compra " \
-        "WHERE parcela.data_vencimento >= '2028-06-01' AND parcela.data_vencimento <= '2028-10-31';"
+        "JOIN banco on banco.id_banco = compra.id_banco " \
+        "WHERE parcela.data_vencimento >= '2028-06-01' AND parcela.data_vencimento <= '2028-10-31' " \
+        "and banco.nome = 'nubank';"
         cursor.execute(sql)
         fatura = cursor.fetchall()
-        #print(fatura)
+        print(fatura)
     except Exception as e :
         return jsonify({"erro": str(e)})
     
@@ -289,7 +295,10 @@ def lista_fatura_c6():
         "parcela.valor_parcela FROM compra JOIN pessoa ON pessoa.id_pessoa = compra.id_pessoa " \
         "JOIN lojasite ON lojasite.id_lojasite = compra.id_lojasite " \
         "JOIN parcela ON parcela.id_compra = compra.id_compra " \
-        "WHERE parcela.data_vencimento >= '2028-06-01' AND parcela.data_vencimento <= '2028-10-31';"
+        "JOIN banco on banco.id_banco = compra.id_banco " \
+        "WHERE parcela.data_vencimento >= '2028-06-01' AND parcela.data_vencimento <= '2028-10-31' " \
+        "and banco.nome = 'c6';"
+
         cursor.execute(sql)
         fatura = cursor.fetchall()
         #print(fatura)
@@ -300,6 +309,7 @@ def lista_fatura_c6():
     conexao.close()
 
     return jsonify(fatura)
+
 
 
 if __name__ == "__main__":
