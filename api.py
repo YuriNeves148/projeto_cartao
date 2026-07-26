@@ -150,6 +150,73 @@ def lista_loja():
 
     return jsonify(dado)
 
+@app.route("/criacao/excluir_pessoa", methods=["DELETE"])
+def excluir_pessoa():
+    dado = request.get_json()
+    nome = dado.get("pessoa")
+
+    conexao = conecta_banco()
+    cursor = conexao.cursor()
+
+    # verifica se existe esse nome
+    cursor.execute("SELECT nome FROM pessoa WHERE nome = %s", (nome,))
+    encontra = cursor.fetchone()
+    if encontra is None:
+        return jsonify({"erro" : "Pessoa não encontrada"}), 404
+
+    cursor.execute("DELETE FROM pessoa WHERE nome = %s", (nome,))
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return jsonify(nome)
+
+@app.route("/criacao/excluir_loja", methods=["DELETE"])
+def excluir_loja():
+    dado = request.get_json()
+    nome = dado.get("nome")
+
+    conexao = conecta_banco()
+    cursor = conexao.cursor(dictionary=True)
+
+    # verfica se loja existe
+    cursor.execute("SELECT nome FROM lojasite WHERE nome = %s", (nome,))
+    encontra = cursor.fetchone()
+    if encontra is None:
+        return jsonify({"erro" : "Nome da loja ou site não encontrado"}), 404
+    
+    cursor.execute("DELETE FROM lojasite WHERE nome = %s", (nome,))
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+    print(encontra)
+    return jsonify(encontra), 200
+
+@app.route("/criacao/excluir_banco", methods=["DELETE"])
+def excluir_banco():
+    dado = request.get_json()
+    nome = dado.get("nome")
+    
+    conexao = conecta_banco()
+    cursor = conexao.cursor(dictionary=True)
+
+    # verfica se banco existe
+    cursor.execute("SELECT nome FROM banco WHERE nome = %s", (nome,))
+    encontra = cursor.fetchone()
+    if encontra is None:
+        return jsonify({"erro" : "Nome do banco não encontrado"}), 404
+    
+    cursor.execute("DELETE FROM banco WHERE nome = %s", (nome,))
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+    print(encontra)
+
+    return jsonify(encontra), 200
+
 @app.route("/compra/lista")
 def lista_compra():
     conexao = conecta_banco()

@@ -1,18 +1,24 @@
+// poderia crar uma funcao apenas para adicionar pessoa, banco e loja*
+
 const api_url = "http://127.0.0.1:5000";
 
-// adicionar pessoa
+// inputs
 const input_pessoa = document.getElementById("input_pessoa");
-const btn_adicionar_pessoa = document.getElementById("btn_adicionar_pessoa");
-// adicionar banco
 const input_banco = document.getElementById("input_banco");
-const btn_adicionar_banco = document.getElementById("btn_adicionar_banco");
-// adicionar loja
-const btn_adicionar_loja = document.getElementById("btn_adicionar_loja");
 const input_loja = document.getElementById("input_loja");
+// adicionar
+const btn_adicionar_pessoa = document.getElementById("btn_adicionar_pessoa");
+const btn_adicionar_banco = document.getElementById("btn_adicionar_banco");
+const btn_adicionar_loja = document.getElementById("btn_adicionar_loja");
+// excluir
+const btn_excluir_pessoa = document.getElementById("excluir_pessoa");
+const btn_excluir_loja = document.getElementById("excluir_loja");
+const btn_excluir_banco = document.getElementById("excluir_banco");
 // exibe lista
 const lista_pessoa_cont = document.getElementById("lista_pessoa_cont");
 const lista_banco_cont = document.getElementById("lista_banco_cont");
 const lista_loja_cont = document.getElementById("lista_loja_cont");
+// para editar
 
 // área CRIAÇÃO
 btn_adicionar_pessoa.addEventListener("click", async () => {
@@ -99,6 +105,10 @@ export async function lista_pessoa_func() {
     const novo_item = document.createElement("li");
     novo_item.textContent = `${secao.nome}`; // nome da coluna no banco
     lista_pessoa_cont.appendChild(novo_item);
+    // sendo clicavel e adicionando no input
+    novo_item.addEventListener("click", () => {
+      input_pessoa.value = secao.nome;
+    });
   });
 }
 
@@ -114,6 +124,9 @@ export async function lista_banco_func() {
     const novo_item = document.createElement("li");
     novo_item.textContent = `${secao.nome}`;
     lista_banco_cont.append(novo_item);
+    novo_item.addEventListener("click", () => {
+      input_banco.value = secao.nome;
+    });
   });
 }
 
@@ -130,5 +143,91 @@ export async function lista_loja_func() {
     const novo_item = document.createElement("li");
     novo_item.textContent = `${secao.nome}`;
     lista_loja_cont.append(novo_item);
+    novo_item.addEventListener("click", () => {
+      input_loja.value = secao.nome;
+    });
   });
 }
+
+btn_excluir_pessoa.addEventListener("click", async () => {
+  const nome_pessoa = input_pessoa.value.trim();
+  if (nome_pessoa === "") {
+    alert("Digite o nome da pessoa para excluir!");
+  }
+
+  try {
+    const resposta = await fetch(`${api_url}/criacao/excluir_pessoa`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pessoa: nome_pessoa }),
+    });
+
+    const dado = await resposta.json();
+    if (!resposta.ok) {
+      alert(dado.erro);
+      return;
+    }
+    alert(`Pessoa excluída com sucesso!`);
+    console.log(dado);
+    return;
+  } catch (erro) {
+    console.error(erro);
+    alert("Erro ao excluir pessoa!");
+  }
+});
+
+btn_excluir_loja.addEventListener("click", async () => {
+  const input = input_loja.value.trim();
+
+  if (input === "") {
+    alert("Digite o nome da loja pu site para excluir.");
+    return;
+  }
+  try {
+    const resposta = await fetch(`${api_url}/criacao/excluir_loja`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nome: input }),
+    });
+    const dado = await resposta.json();
+    if (!resposta.ok) {
+      console.log(dado.erro);
+      alert("Loja ou site inexistente.");
+      return;
+    }
+    console.log(dado);
+    alert(`Loja '${dado.nome}' excluida com sucesso!"`);
+    input_loja.value = "";
+    return;
+  } catch (erro) {
+    alert("Erro encontrado: ", erro);
+  }
+});
+
+btn_excluir_banco.addEventListener("click", async () => {
+  const input = input_banco.value.trim();
+
+  if (input === "") {
+    alert("Digite o nome do banco para excluir.");
+    return;
+  }
+  try {
+    const resposta = await fetch(`${api_url}/criacao/excluir_banco`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nome: input }),
+    });
+    const dado = await resposta.json();
+    if (!resposta.ok) {
+      console.log(dado.erro);
+      alert("Banco inexistente.");
+      return;
+    }
+    console.log(dado);
+    alert(`Banco '${dado.nome}' excluido com sucesso!"`);
+    input_banco.value = "";
+    return;
+  } catch (erro) {
+    alert("Erro encontrado: ", erro);
+  }
+});

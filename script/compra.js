@@ -140,13 +140,13 @@ btn_salvar_compra.addEventListener("click", async () => {
 });
 
 btn_excluir_compra.addEventListener("click", async () => {
-  valor_codigo = codigo.value.trim();
-  valor_data = data.value.trim();
-  valor_nome = nome.value.trim();
-  valor_banco = banco.value.trim();
-  valor_loja = loja.value.trim();
-  valor_valor_total = valor_total.value.trim();
-  valor_qtd_parcela = qtd_parcela.value.trim();
+  const valor_codigo = codigo.value.trim();
+  const valor_data = data.value.trim();
+  const valor_nome = nome.value.trim();
+  const valor_banco = banco.value.trim();
+  const valor_loja = loja.value.trim();
+  const valor_valor_total = valor_total.value.trim();
+  const valor_qtd_parcela = qtd_parcela.value.trim();
   if (
     valor_codigo.value === "" ||
     valor_data.value === "" ||
@@ -190,6 +190,7 @@ btn_excluir_compra.addEventListener("click", async () => {
     const dado = await resposta.json();
     console.log(dado);
   } catch (erro) {
+    console.error(erro);
     alert("Nao foi possivel se conectar a API");
   }
 });
