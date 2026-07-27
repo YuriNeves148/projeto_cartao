@@ -19,6 +19,26 @@
             <button onclick="mostrar('sec_fatura')">fatura</button>
             <button onclick="mostrar('sec_compra')">área de compras</button>
           </nav>
+          <!-- janela para reembolso -->
+          <div id="janela_reembolso">
+            <div id="conteudo_reembolso">
+              <h1>registrar reembolso</h1>
+              <label>código selecionado:</label>
+              <input readonly id="cod_reembolso" />
+              <label>valor do reembolso:</label>
+              <input
+                type="number"
+                placeholder="ex: 9.99"
+                id="valor_reembolso"
+              />
+              <label>data do reembolso</label>
+              <input type="date" id="data_reembolso" />
+              <div id="botoes_reembolso">
+                <button id="salvar_reembolso">salvar</button>
+                <button id="cancelar_reembolso">cancelar</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div id="conteudo_section">
@@ -266,7 +286,7 @@
                 <nav id="conteudo_fundo_baixo">
                   <button id="btn_apagar_inputs">apagar inputs</button>
                   <button id="btn_excluir_compra">excluir compra</button>
-                  <button id="btn_reembolso">reembolso da compra</button>
+                  <button id="btn_reembolso">pedir reembolso</button>
                 </nav>
               </div>
             </div>
@@ -274,6 +294,7 @@
         </section>
       </div>
     </div>
+
     <!--procurar como melhorar a aparicao dos resultados de listas-->
     <script type="module" src="script.js" defer></script>
     <!-- área home -->

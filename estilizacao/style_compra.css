@@ -264,6 +264,15 @@
   background-color: #f9d7d4;
 }
 
+/* janela para reemboslo */
+#janela_reembolso {
+  display: none;
+
+  & h1 {
+    font-size: 19px;
+  }
+}
+
 /* RESPONSIVO */
 @media (max-width: 800px) {
   #fundo_nav {

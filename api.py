@@ -116,7 +116,7 @@ def lista_pessoa():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
 
-    cursor.execute("SELECT nome FROM pessoa")
+    cursor.execute("SELECT * FROM pessoa")
     dado = cursor.fetchall()
     #print(dado)
     cursor.close()
@@ -129,7 +129,7 @@ def lista_banco():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
 
-    cursor.execute("SELECT nome FROM banco")
+    cursor.execute("SELECT * FROM banco")
     dado = cursor.fetchall()
     #print(dado)
     cursor.close()
@@ -142,7 +142,7 @@ def lista_loja():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
 
-    cursor.execute("SELECT nome FROM lojasite")
+    cursor.execute("SELECT * FROM lojasite")
     dado = cursor.fetchall()
     #print(dado)
     cursor.close()
@@ -198,7 +198,7 @@ def excluir_loja():
 def excluir_banco():
     dado = request.get_json()
     nome = dado.get("nome")
-    
+
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
 
@@ -216,6 +216,57 @@ def excluir_banco():
     print(encontra)
 
     return jsonify(encontra), 200
+
+@app.route("/criacao/edita_pessoa", methods=["PUT"])
+def editar_pessoa():
+    dados = request.get_json()
+    nome = dados.get("nome_novo")
+    id = dados.get("id_original")
+
+    conexao = conecta_banco()
+    cursor = conexao.cursor()
+
+    cursor.execute("UPDATE pessoa SET nome = %s WHERE id_pessoa = %s", (nome, id))
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return jsonify({"sucesso" : f"nome atualizado para: '{nome}'"})
+
+@app.route("/criacao/edita_banco", methods=["PUT"])
+def editar_banco():
+    dados = request.get_json()
+    nome = dados.get("nome_novo")
+    id = dados.get("id_original")
+
+    conexao = conecta_banco()
+    cursor = conexao.cursor()
+
+    cursor.execute("UPDATE banco SET nome = %s WHERE id_banco = %s", (nome, id))
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return jsonify({"sucesso" : f"nome atualizado para: '{nome}'"})
+
+@app.route("/criacao/edita_loja", methods=["PUT"])
+def editar_loja():
+    dados = request.get_json()
+    nome = dados.get("nome_novo")
+    id = dados.get("id_original")
+
+    conexao = conecta_banco()
+    cursor = conexao.cursor()
+
+    cursor.execute("UPDATE lojasite SET nome = %s WHERE id_lojasite = %s", (nome, id))
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return jsonify({"sucesso" : f"nome atualizado para: '{nome}'"})
 
 @app.route("/compra/lista")
 def lista_compra():

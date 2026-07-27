@@ -36,7 +36,13 @@ const lista_pesquisa_loja = document.getElementById("pesquisa_loja");
 // para controlar as listas quando digitar o nome de uma pessoa, um banco ou loja
 const container_nome = document.querySelector(".campo_com_sugestao");
 const teste_lista = document.querySelectorAll(".lista_pesquisa");
-console.log(data.value);
+// reembolso
+const btn_reembolso = document.getElementById("btn_reembolso");
+const btn_cancelar_reembolso = document.getElementById("cancelar_reembolso");
+const btn_salvar_reembolso = document.getElementById("salvar_reembolso");
+let input_cod_compra = document.getElementById("cod_reembolso");
+let valor_reembolso = document.getElementById("valor_reembolso");
+let data_reembolso = document.getElementById("data_reembolso");
 
 export async function historico_compra() {
   const resposta = await fetch(`${api_url}/compra/lista`);
@@ -65,7 +71,6 @@ export async function historico_compra() {
     novo_item.dataset.id = item.id_compra;
     novo_item.addEventListener("click", () => {
       codigo.value = item.id_compra;
-      console.log("a", novo_item.id_compra);
       const dataInput = dataa.toISOString().split("T")[0];
       data.value = dataInput;
       nome.value = item.nome_pessoa;
@@ -81,9 +86,8 @@ export async function historico_compra() {
       lojaEditandoCompra = item.onde;
       valor_totalEditandoCompra = item.valor_total;
       qtd_parcelaEditandoCompra = item.qtd_parcela;
-      console.log("Nome da pessoa selecionada: ", nomeEditandoCompra);
+      console.log("id da compra selecionada: ", idEditandoCompra);
       // a cada final de chamada os valores recebem null (como na declaracao inicial)
-      console.log(listaEditando.map(() => null));
     });
     lista_compra_cont.appendChild(novo_item);
   });
@@ -203,6 +207,7 @@ btn_apagar_inputs.addEventListener("click", () => {
   loja.value = "";
   valor_total.value = "";
   qtd_parcela.value = "";
+  janela_reembolso.style.display = "none";
 });
 
 function configurarBusca(input, lista, tipo) {
@@ -259,3 +264,25 @@ document.addEventListener("click", (evento) => {
     lista_pesquisa_loja.style.display = "none";
   }
 });
+
+btn_reembolso.addEventListener("click", () => {
+  if (idEditandoCompra === null) {
+    alert("Selecione uma compra para pedir reembolso");
+    return;
+  }
+  janela_reembolso.style.display = "block";
+  input_cod_compra.value = idEditandoCompra;
+});
+
+btn_cancelar_reembolso.addEventListener("click", () => {
+  janela_reembolso.style.display = "none";
+  codigo.value = "";
+  data.value = "";
+  nome.value = "";
+  banco.value = "";
+  loja.value = "";
+  valor_total.value = "";
+  qtd_parcela.value = "";
+});
+
+btn_salvar_reembolso.addEventListener("click", () => {});

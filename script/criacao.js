@@ -14,11 +14,21 @@ const btn_adicionar_loja = document.getElementById("btn_adicionar_loja");
 const btn_excluir_pessoa = document.getElementById("excluir_pessoa");
 const btn_excluir_loja = document.getElementById("excluir_loja");
 const btn_excluir_banco = document.getElementById("excluir_banco");
+// editar
+const btn_editar_pessoa = document.getElementById("editar_pessoa");
+const btn_editar_banco = document.getElementById("editar_banco");
+const btn_editar_loja = document.getElementById("editar_loja");
+let nomePessoaEditando = null;
+let idPessoaEditando = null;
+let nomeBancoEditando = null;
+let idBancoEditando = null;
+let idLojaEditando = null;
+let nomeLojaEditando = null;
+
 // exibe lista
 const lista_pessoa_cont = document.getElementById("lista_pessoa_cont");
 const lista_banco_cont = document.getElementById("lista_banco_cont");
 const lista_loja_cont = document.getElementById("lista_loja_cont");
-// para editar
 
 // área CRIAÇÃO
 btn_adicionar_pessoa.addEventListener("click", async () => {
@@ -87,7 +97,7 @@ btn_adicionar_loja.addEventListener("click", async () => {
     }
     const dado = await resposta.json();
     console.log("loja adicionada: ", dado);
-    input_banco.value = "";
+    input_loja.value = "";
   } catch (erro) {
     alert("Erro ao acessar a API (salvar loja).");
   }
@@ -100,6 +110,7 @@ export async function lista_pessoa_func() {
     return;
   }
   lista_pessoa_cont.innerHTML = "";
+
   const dado = await resposta.json();
   dado.forEach((secao) => {
     const novo_item = document.createElement("li");
@@ -108,6 +119,11 @@ export async function lista_pessoa_func() {
     // sendo clicavel e adicionando no input
     novo_item.addEventListener("click", () => {
       input_pessoa.value = secao.nome;
+
+      idPessoaEditando = secao.id_pessoa;
+      nomePessoaEditando = secao.nome;
+      input_pessoa.focus();
+      console.log(`EDITANDO: ${idPessoaEditando}. ${nomePessoaEditando}`);
     });
   });
 }
@@ -126,6 +142,9 @@ export async function lista_banco_func() {
     lista_banco_cont.append(novo_item);
     novo_item.addEventListener("click", () => {
       input_banco.value = secao.nome;
+      nomeBancoEditando = secao.nome;
+      idBancoEditando = secao.id_banco;
+      console.log(`EDITANDO: ${idBancoEditando}. ${nomeBancoEditando}`);
     });
   });
 }
@@ -145,6 +164,10 @@ export async function lista_loja_func() {
     lista_loja_cont.append(novo_item);
     novo_item.addEventListener("click", () => {
       input_loja.value = secao.nome;
+
+      idLojaEditando = secao.id_lojasite;
+      nomeLojaEditando = secao.nome;
+      console.log(`EDITANDO: ${idLojaEditando}. ${nomeLojaEditando}`);
     });
   });
 }
@@ -226,8 +249,135 @@ btn_excluir_banco.addEventListener("click", async () => {
     console.log(dado);
     alert(`Banco '${dado.nome}' excluido com sucesso!"`);
     input_banco.value = "";
-    return;
   } catch (erro) {
     alert("Erro encontrado: ", erro);
+  }
+});
+
+btn_editar_pessoa.addEventListener("click", async () => {
+  //const input_orig_nome = nomePessoaEditando;
+  const input_orig_id_nome = idPessoaEditando;
+  const input_orig_nome = nomePessoaEditando;
+  const nome_alterado = input_pessoa.value.trim();
+  if (
+    input_orig_id_nome === null ||
+    input_orig_nome === null ||
+    nome_alterado === ""
+  ) {
+    alert("Clique no item que deseja alterar");
+    input_pessoa.value = "";
+    return;
+  }
+  if (nome_alterado == input_orig_nome) {
+    alert("O nome é o mesmo do original");
+    return;
+  }
+  try {
+    const resposta = await fetch(`${api_url}/criacao/edita_pessoa`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id_original: input_orig_id_nome,
+        nome_original: input_orig_nome,
+        nome_novo: nome_alterado,
+      }),
+    });
+    if (!resposta.ok) {
+      alert("Erro ao conectar com a API (editar nome)");
+      return;
+    }
+    const dado = await resposta.json();
+    console.log("Resposta ", dado);
+    input_pessoa.value = "";
+    alert(dado.sucesso);
+    location.reload();
+  } catch (erro) {
+    console.error(dado.erro);
+  }
+});
+
+btn_editar_banco.addEventListener("click", async () => {
+  const input_orig_id_nome = idBancoEditando;
+  const input_orig_nome = nomeBancoEditando;
+  const nome_alterado = input_banco.value.trim();
+  console.log(input_orig_id_nome);
+  console.log(input_orig_nome);
+  if (
+    input_orig_id_nome === null ||
+    input_orig_nome === null ||
+    nome_alterado === ""
+  ) {
+    alert("Clique no item que deseja alterar");
+    input_banco.value = "";
+    return;
+  }
+  if (nome_alterado == input_orig_nome) {
+    alert("O nome é o mesmo do original");
+    return;
+  }
+  try {
+    const resposta = await fetch(`${api_url}/criacao/edita_banco`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id_original: input_orig_id_nome,
+        nome_original: input_orig_nome,
+        nome_novo: nome_alterado,
+      }),
+    });
+    if (!resposta.ok) {
+      alert("Erro ao conectar com a API (editar nome)");
+      return;
+    }
+    const dado = await resposta.json();
+    console.log("Resposta ", dado);
+    input_banco.value = "";
+    alert(dado.sucesso);
+    location.reload();
+  } catch (erro) {
+    console.error(dado.erro);
+  }
+});
+
+btn_editar_loja.addEventListener("click", async () => {
+  const input_orig_id_nome = idLojaEditando;
+  const input_orig_nome = nomeLojaEditando;
+  const nome_alterado = input_loja.value.trim();
+  console.log(input_orig_id_nome);
+  console.log(input_orig_nome);
+  if (
+    input_orig_id_nome === null ||
+    input_orig_nome === null ||
+    nome_alterado === ""
+  ) {
+    alert("Clique no item que deseja alterar");
+    input_loja.value = "";
+    return;
+  }
+  if (nome_alterado == input_orig_nome) {
+    alert("O nome é o mesmo do original");
+    return;
+  }
+  try {
+    const resposta = await fetch(`${api_url}/criacao/edita_loja`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id_original: input_orig_id_nome,
+        nome_original: input_orig_nome,
+        nome_novo: nome_alterado,
+      }),
+    });
+    if (!resposta.ok) {
+      alert("Erro ao conectar com a API (editar nome)");
+      return;
+    }
+    const dado = await resposta.json();
+    console.log("Resposta ", dado);
+    input_loja.value = "";
+    alert(dado.sucesso);
+    location.reload();
+  } catch (erro) {
+    console.error(dado.erro);
   }
 });
