@@ -276,6 +276,8 @@ btn_reembolso.addEventListener("click", () => {
 
 btn_cancelar_reembolso.addEventListener("click", () => {
   janela_reembolso.style.display = "none";
+  valor_reembolso.value = "";
+  data_reembolso.value = "";
   codigo.value = "";
   data.value = "";
   nome.value = "";
@@ -285,4 +287,36 @@ btn_cancelar_reembolso.addEventListener("click", () => {
   qtd_parcela.value = "";
 });
 
-btn_salvar_reembolso.addEventListener("click", () => {});
+btn_salvar_reembolso.addEventListener("click", async () => {
+  const codigo_comp = idEditandoCompra;
+  const valor_r = valor_reembolso.value.trim();
+  const data_r = data_reembolso.value.trim();
+
+  if (valor_r === "" || data_r === "") {
+    alert("preencha todos os campos para salvar o reembolso");
+    return;
+  }
+  try {
+    const resposta = await fetch(`${api_url}/compra/reembolso`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        codigo: codigo_comp,
+        valor: valor_r,
+        data: data_r,
+      }),
+    });
+    const dado = await resposta.json();
+    if (!resposta.ok) {
+      alert("Não foi possível se conectar a API (salvar reembolso)");
+      return;
+    }
+    //console.log(dado);
+    alert("Reembolso salvo com sucesso.\n");
+    janela_reembolso.style.display = "none";
+    valor_reembolso.value = "";
+    data_reembolso.value = "";
+  } catch (erro) {
+    console.error(erro);
+  }
+});

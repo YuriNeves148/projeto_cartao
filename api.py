@@ -428,6 +428,29 @@ def lista_fatura_c6():
 
     return jsonify(fatura)
 
+@app.route("/compra/reembolso", methods=["POST"])
+def salvar_reembolso():
+    dados = request.get_json()
+    codigo_compra = dados.get("codigo")
+    valor_reembolso = dados.get("valor")
+    data_reembolso = dados.get("data")
+
+    conexao = conecta_banco()
+    cursor = conexao.cursor()
+
+    sql = "INSERT INTO reembolso (id_compra, valor_reembolso, data_reembolso) " \
+    "VALUES (%s, %s, %s)"
+    
+    cursor.execute(sql, (codigo_compra, valor_reembolso, data_reembolso))
+    conexao.commit()
+    
+    cursor.close()
+    conexao.close()
+
+
+    return jsonify({"sucesso":"reembolso registrado!"}), 201
+
+
 
 
 if __name__ == "__main__":

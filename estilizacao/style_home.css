@@ -78,7 +78,7 @@ body {
 
 #conteudo_section {
   flex: 1;
-  border: 2.5px solid #1a1a1a;
+  /*border: 2.5px solid #1a1a1a;*/
   border-radius: 18px;
   padding: 20px;
   min-height: 85vh;

@@ -267,9 +267,49 @@
 /* janela para reemboslo */
 #janela_reembolso {
   display: none;
-
   & h1 {
     font-size: 19px;
+    padding-bottom: 10px;
+  }
+}
+#conteudo_reembolso {
+  font-size: 18px;
+  margin-top: 100px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border: 1px solid gray;
+  background-color: rgb(173, 173, 173);
+  border-radius: 10px;
+  & label {
+    padding-left: 5px;
+  }
+}
+.input_reembolso {
+  font-size: 16px;
+  padding-left: 10px;
+  padding: 6px;
+  width: 90%;
+  border-radius: 10px;
+  border: 2px solid black;
+}
+#botoes_reembolso {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 6px;
+  margin-top: 15px;
+  & button {
+    font-size: 18px;
+  }
+  #salvar_reembolso {
+    background-color: #9bb5e9;
+    cursor: pointer;
+  }
+  #cancelar_reembolso {
+    background-color: rgb(243, 104, 104);
+    cursor: pointer;
+  }
+  & button:hover {
+    opacity: 0.8;
   }
 }
 
