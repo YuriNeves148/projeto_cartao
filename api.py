@@ -393,7 +393,7 @@ def lista_fatura_nubank():
         "and banco.nome = 'nubank';"
         cursor.execute(sql)
         fatura = cursor.fetchall()
-        print(fatura)
+        #print(fatura)
     except Exception as e :
         return jsonify({"erro": str(e)})
     
@@ -450,8 +450,19 @@ def salvar_reembolso():
 
     return jsonify({"sucesso":"reembolso registrado!"}), 201
 
+@app.route("/fatura/valor_nubank")
+def valor_fatura_nubank():
+    conexao = conecta_banco()
+    cursor = conexao.cursor(dictionary=True)
 
+    sql = "select SUM(valor_total/qtd_parcela) as fat_nu from " \
+    "compra where id_banco = 1 and data_compra > '2028-01-01'"
+    cursor.execute(sql)
 
+    valor_nu = cursor.fetchone()
+    #print(valor_nu)
+    
+    return jsonify({"valor":valor_nu})
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
