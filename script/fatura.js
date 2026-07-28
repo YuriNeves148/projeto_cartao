@@ -6,6 +6,7 @@ const btn_buscar_nubank = document.getElementById("btn_buscar_nubank");
 const lista_fatura_c6 = document.getElementById("lista_fatura_c6");
 const btn_buscar_c6 = document.getElementById("btn_buscar_c6");
 const valor_fatura_nubank = document.getElementById("valor_fatura_nubank");
+
 export async function lista_fatura_nubank_func() {
   const resposta = await fetch(`${api_url}/fatura/lista_nubank`);
   if (!resposta.ok) {
@@ -59,7 +60,6 @@ btn_buscar_c6.addEventListener("click", lista_fatura_c6_func);
 
 export async function valor_fatura_nubank_func() {
   const resposta = await fetch(`${api_url}/fatura/valor_nubank`);
-
   if (!resposta.ok) {
     alert("Erro ao acessar a API (acessar fatura nubank).");
     return;

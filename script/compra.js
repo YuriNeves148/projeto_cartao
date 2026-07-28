@@ -43,6 +43,8 @@ const btn_salvar_reembolso = document.getElementById("salvar_reembolso");
 let input_cod_compra = document.getElementById("cod_reembolso");
 let valor_reembolso = document.getElementById("valor_reembolso");
 let data_reembolso = document.getElementById("data_reembolso");
+// edicao
+const btn_edita_compra = document.getElementById("btn_edita_compra");
 
 export async function historico_compra() {
   const resposta = await fetch(`${api_url}/compra/lista`);
@@ -316,6 +318,49 @@ btn_salvar_reembolso.addEventListener("click", async () => {
     janela_reembolso.style.display = "none";
     valor_reembolso.value = "";
     data_reembolso.value = "";
+  } catch (erro) {
+    console.error(erro);
+  }
+});
+
+btn_edita_compra.addEventListener("click", async () => {
+  if (idEditandoCompra === null) {
+    alert("Selecione um item para editar.");
+    return;
+  }
+
+  const data_recebida = new Date(dataEditandoCompra);
+  const data_formatada = data_recebida.toISOString().split("T")[0];
+
+  try {
+    const resposta = await fetch(`${api_url}/compra/edicao`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: idEditandoCompra,
+        data: data_formatada,
+        nome: nome.value,
+        banco: banco.value,
+        loja: loja.value,
+        valor_total: valor_total.value,
+        qtd_parcela: qtd_parcela.value,
+      }),
+    });
+    if (!resposta.ok) {
+      alert("Nao foi possivel se conectar a API (editar compra).");
+      return;
+    }
+    const dado = await resposta.json();
+    console.log(dado);
+    codigo.value === "";
+    data.value === "";
+    nome.value === "";
+    banco.value === "";
+    loja.value === "";
+    valor_total.value === "";
+    qtd_parcela.value === "";
+    alert("Compra alterada!");
+    location.reload();
   } catch (erro) {
     console.error(erro);
   }

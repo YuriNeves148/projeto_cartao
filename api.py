@@ -464,6 +464,49 @@ def valor_fatura_nubank():
     
     return jsonify({"valor":valor_nu})
 
+@app.route("/compra/edicao", methods=["PUT"])
+def editar_compra():
+    dados = request.get_json()
+    id_compra = dados.get("id")
+    data = dados.get("data")
+    nome = dados.get("nome")
+    banco = dados.get("banco")
+    loja = dados.get("loja")
+    valor_total = dados.get("valor_total")
+    qtd_parcela = dados.get("qtd_parcela")
+
+    conexao = conecta_banco()
+    cursor = conexao.cursor(buffered=True)
+
+    cursor.execute("SELECT id_pessoa FROM pessoa WHERE nome = %s", (nome,))
+    id_pessoa = cursor.fetchone()[0]
+
+    cursor.execute("SELECT id_banco FROM banco WHERE nome = %s", (banco,))
+    id_banco = cursor.fetchone()[0]
+
+    cursor.execute("SELECT id_lojasite FROM lojasite WHERE nome = %s", (loja,))
+    id_loja = cursor.fetchone()[0]
+
+    print("ID:", id_compra)
+    print("Pessoa:", id_pessoa)
+    print("Banco:", id_banco)
+    print("Loja:", id_loja)
+    print("Data:", data)
+    print("Valor:", valor_total)
+    print("Parcelas:", qtd_parcela)
+
+    edicao = "UPDATE compra SET id_pessoa = %s, id_banco = %s, id_lojasite = %s, " \
+    "data_compra = %s, valor_total = %s, qtd_parcela = %s WHERE id_compra = %s"
+
+    cursor.execute(edicao, (id_pessoa, id_banco, id_loja, data, valor_total, qtd_parcela, id_compra))
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return jsonify({"a":"b"})
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
 

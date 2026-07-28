@@ -30,7 +30,7 @@ const lista_pessoa_cont = document.getElementById("lista_pessoa_cont");
 const lista_banco_cont = document.getElementById("lista_banco_cont");
 const lista_loja_cont = document.getElementById("lista_loja_cont");
 
-// área CRIAÇÃO
+// ADIÇÃO
 btn_adicionar_pessoa.addEventListener("click", async () => {
   const nome_pessoa = input_pessoa.value.trim();
   if (nome_pessoa === "") {
@@ -103,6 +103,7 @@ btn_adicionar_loja.addEventListener("click", async () => {
   }
 });
 
+// LISTAS
 export async function lista_pessoa_func() {
   const resposta = await fetch(`${api_url}/criacao/lista_pessoa`);
   if (!resposta.ok) {
@@ -172,6 +173,7 @@ export async function lista_loja_func() {
   });
 }
 
+// EXCLUSÃO
 btn_excluir_pessoa.addEventListener("click", async () => {
   const nome_pessoa = input_pessoa.value.trim();
   if (nome_pessoa === "") {
@@ -254,6 +256,7 @@ btn_excluir_banco.addEventListener("click", async () => {
   }
 });
 
+// EDIÇÃO
 btn_editar_pessoa.addEventListener("click", async () => {
   //const input_orig_nome = nomePessoaEditando;
   const input_orig_id_nome = idPessoaEditando;
