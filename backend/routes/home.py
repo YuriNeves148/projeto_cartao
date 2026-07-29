@@ -19,12 +19,12 @@ def conecta_banco():
 def lista_historico():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
+    print("aaaaaaaaaaa\n\n")
 
     mes = request.args.get("mes")
     ano = request.args.get("ano", date.today().year)
     if mes is None:
         return jsonify({"erro":"selecione um mes para prosseguir"})
-
     mes_sql = int(mes) + 1
     ano = int(ano)
     # resolvendo problema de fatura
@@ -32,7 +32,8 @@ def lista_historico():
 
     data_inicio = data_fim - relativedelta(months=1)
     data_inicio = data_inicio.replace(day=10)
-
+    print(data_inicio)
+    print(data_fim)
     sql = "select pessoa.nome as nome_pessoa, banco.nome as nome_banco, " \
     "lojasite.nome as onde, compra.data_compra, valor_total, qtd_parcela, " \
     "(compra.valor_total / compra.qtd_parcela) as valor_parcela " \
@@ -51,26 +52,45 @@ def lista_historico():
     return jsonify(dado), 200    
 
 @home_bp.route("/home/faturas")
-def fatura_nubank():
+def faturas():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
 
-    sql_nu = "select SUM(valor_total/qtd_parcela) as fat_nu from compra where id_banco = 1;"
-    cursor.execute(sql_nu)
-    fat_nu = cursor.fetchone()
-    #print("FATURA NU:", fat_nu)
+    mes = request.args.get("mes")
+    ano = request.args.get("ano", date.today().year)
+    if mes is None:
+        return jsonify({"erro":"selecione um mes para prosseguir"})
 
-    sql_bb = "select SUM(valor_total/qtd_parcela) as fat_nu from compra where id_banco = 2;" #simulando os valores da C6
-    cursor.execute(sql_bb)
-    fat_bb = cursor.fetchone()
-    #print("FATURA BB:", fat_bb)
+    mes_sql = int(mes) + 1
+    ano = int(ano)
+
+    # resolvendo problema de fatura
+    data_fim = date(ano, mes_sql, 9)
+    data_inicio = data_fim - relativedelta(months=1)
+    data_inicio = data_inicio.replace(day=10)
+
+    # selecionando para NUBANK
+    sql_nu = "SELECT SUM(valor_total/qtd_parcela) AS fat_nu FROM compra " \
+    "WHERE id_banco = 1 and compra.data_compra BETWEEN %s AND %s;"
+    cursor.execute(sql_nu, (data_inicio, data_fim))
+    fatura_nu = cursor.fetchone()
+
+    # selecionando para C6
+    sql_bb = "select SUM(valor_total/qtd_parcela) as fat_c6 from compra " \
+    "JOIN banco " \
+    "WHERE banco.nome = 'C6' and compra.data_compra BETWEEN %s AND %s;"
+    cursor.execute(sql_bb, (data_inicio, data_fim))
+    fatura_c6 = cursor.fetchone()
+
+    print("FATURA NUBANK:", fatura_nu)
+    print("FATURA C6:", fatura_c6)
 
     cursor.close()
     conexao.close()
 
-    return jsonify({"fat_bb": fat_bb, "fat_nu": fat_nu})
+    return jsonify({"nubank": fatura_nu, "c6": fatura_c6})
 
-
+"""
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
-
+"""

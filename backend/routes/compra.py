@@ -234,7 +234,7 @@ def gerador_parcela(cursor, id_compra, data_compra, qtd_parcela, valor_total):
         data_vencimento = primeira_parc + relativedelta(months=i - 1)
         cursor.execute(sql, (id_compra, i, valor_parcela, data_vencimento))
         print(i, data_vencimento)
-    print("\n\nparcelas gerada!")
+    #print("\n\nparcelas gerada!")
 
 
 """
