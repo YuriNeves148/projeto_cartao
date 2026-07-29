@@ -27,7 +27,7 @@ def lista_compra():
     "from compra join pessoa on pessoa.id_pessoa = compra.id_pessoa " \
     "join banco on banco.id_banco = compra.id_banco " \
     "join lojasite on lojasite.id_lojasite = compra.id_lojasite " \
-    "order by data_compra asc;"
+    "order by compra.id_compra asc;"
 
     cursor.execute(sql)
     dados = cursor.fetchall()
@@ -203,19 +203,20 @@ def editar_compra():
 
 # adicionando parcelas a cada compra
 def gerador_parcela(cursor, id_compra, data_compra, qtd_parcela, valor_total):
-    print("aaa")
+    #print("aaa")
     qtd_parcela = int(qtd_parcela)
     data_compra = datetime.strptime(data_compra,"%Y-%m-%d").date()
 
     valor_parcela = round(float(valor_total) / qtd_parcela, 2)
 
-    if data_compra.day <= 10: 
+    # se for
+    if data_compra.day < 10: 
         primeira_parc = date(
             data_compra.year,
             data_compra.month,
             17
         )
-    # compra feita depois ddo fechamento
+    # compra feita depois do fechamento
     else:
         # se no final do ano
         if data_compra.month == 12:
@@ -233,6 +234,7 @@ def gerador_parcela(cursor, id_compra, data_compra, qtd_parcela, valor_total):
         data_vencimento = primeira_parc + relativedelta(months=i - 1)
         cursor.execute(sql, (id_compra, i, valor_parcela, data_vencimento))
         print(i, data_vencimento)
+    print("\n\nparcelas gerada!")
 
 
 """

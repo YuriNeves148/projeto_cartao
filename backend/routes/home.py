@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
 from flask import Blueprint
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
 home_bp = Blueprint("home", __name__)
 
@@ -13,10 +15,23 @@ def conecta_banco():
         password="12345678"
     )
 
-@home_bp.route("/home/lista_historico")
+@home_bp.route("/home/lista_historico/")
 def lista_historico():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
+
+    mes = request.args.get("mes")
+    ano = request.args.get("ano", date.today().year)
+    if mes is None:
+        return jsonify({"erro":"selecione um mes para prosseguir"})
+
+    mes_sql = int(mes) + 1
+    ano = int(ano)
+    # resolvendo problema de fatura
+    data_fim = date(ano, mes_sql, 9)
+
+    data_inicio = data_fim - relativedelta(months=1)
+    data_inicio = data_inicio.replace(day=10)
 
     sql = "select pessoa.nome as nome_pessoa, banco.nome as nome_banco, " \
     "lojasite.nome as onde, compra.data_compra, valor_total, qtd_parcela, " \
@@ -24,9 +39,10 @@ def lista_historico():
     "from compra join pessoa on pessoa.id_pessoa = compra.id_pessoa " \
     "join banco on banco.id_banco = compra.id_banco " \
     "join lojasite on lojasite.id_lojasite = compra.id_lojasite " \
+    "WHERE compra.data_compra BETWEEN %s AND %s " \
     "order by compra.id_compra asc;"
 
-    cursor.execute(sql)
+    cursor.execute(sql,(data_inicio, data_fim,))
     dado = cursor.fetchall()
     
     cursor.close()

@@ -13,21 +13,25 @@ def conecta_banco():
         password="12345678"
     )
 
-# área FATURA
+# área FATURA 
+"""
+LISTAS ERRADA POIS CAPTURA APENAS AS COMPRAS ADICIONADAS DEPOIS QUE FOI FEITA A ALTERACAO DE ADICIONAR EM PARCELA!!!1
+"""
 @fatura_db.route("/fatura/lista_nubank")
 def lista_fatura_nubank():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
     try:
-        # fatura mes 10
         sql = "SELECT pessoa.nome AS nome, lojasite.nome AS onde, parcela.data_vencimento AS fatura_mes, " \
         "(compra.qtd_parcela - parcela.numero_parcela + 1) AS parc_faltante, " \
-        "parcela.valor_parcela FROM compra JOIN pessoa ON pessoa.id_pessoa = compra.id_pessoa " \
+        "parcela.valor_parcela " \
+        "FROM compra " \
+        "JOIN pessoa ON pessoa.id_pessoa = compra.id_pessoa " \
         "JOIN lojasite ON lojasite.id_lojasite = compra.id_lojasite " \
         "JOIN parcela ON parcela.id_compra = compra.id_compra " \
         "JOIN banco on banco.id_banco = compra.id_banco " \
-        "WHERE parcela.data_vencimento >= '2028-06-01' AND parcela.data_vencimento <= '2028-10-31' " \
-        "and banco.nome = 'nubank';"
+        "WHERE banco.nome = 'Nubank';"
+
         cursor.execute(sql)
         fatura = cursor.fetchall()
         #print(fatura)
@@ -43,16 +47,16 @@ def lista_fatura_nubank():
 def lista_fatura_c6():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
+    
     try:
-        # fatura mes 10
         sql = "SELECT pessoa.nome AS nome, lojasite.nome AS onde, parcela.data_vencimento AS fatura_mes, " \
-        "(compra.qtd_parcela - parcela.numero_parcela + 1) AS parc_faltante, " \
-        "parcela.valor_parcela FROM compra JOIN pessoa ON pessoa.id_pessoa = compra.id_pessoa " \
+        "(compra.qtd_parcela - parcela.numero_parcela + 1) AS parc_faltante, parcela.valor_parcela " \
+        "FROM compra " \
+        "JOIN pessoa ON pessoa.id_pessoa = compra.id_pessoa " \
         "JOIN lojasite ON lojasite.id_lojasite = compra.id_lojasite " \
         "JOIN parcela ON parcela.id_compra = compra.id_compra " \
         "JOIN banco on banco.id_banco = compra.id_banco " \
-        "WHERE parcela.data_vencimento >= '2028-06-01' AND parcela.data_vencimento <= '2028-10-31' " \
-        "and banco.nome = 'c6';"
+        "WHERE banco.nome = 'C6';"
 
         cursor.execute(sql)
         fatura = cursor.fetchall()
@@ -71,7 +75,7 @@ def valor_fatura_nubank():
     cursor = conexao.cursor(dictionary=True)
 
     sql = "select SUM(valor_total/qtd_parcela) as fat_nu from " \
-    "compra where id_banco = 1 and data_compra > '2028-01-01'"
+    "compra where id_banco = 1"
     cursor.execute(sql)
 
     valor_nu = cursor.fetchone()
