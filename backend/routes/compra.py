@@ -1,0 +1,241 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import mysql.connector
+from flask import Blueprint
+from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
+
+compra_bp = Blueprint("compra", __name__)
+
+def conecta_banco():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        database="proj_cartao4",
+        password="12345678"
+    )
+
+# área COMPRA
+@compra_bp.route("/compra/lista")
+def lista_compra():
+    conexao = conecta_banco()
+    cursor = conexao.cursor(dictionary=True)
+
+    sql = "select compra.id_compra, pessoa.nome as nome_pessoa, banco.nome as nome_banco, " \
+    "lojasite.nome as onde, compra.data_compra, valor_total, qtd_parcela, " \
+    "(compra.valor_total / compra.qtd_parcela) as valor_parcela " \
+    "from compra join pessoa on pessoa.id_pessoa = compra.id_pessoa " \
+    "join banco on banco.id_banco = compra.id_banco " \
+    "join lojasite on lojasite.id_lojasite = compra.id_lojasite " \
+    "order by data_compra asc;"
+
+    cursor.execute(sql)
+    dados = cursor.fetchall()
+    #print(dados)
+    return jsonify(dados)
+
+@compra_bp.route("/compra/salvar", methods=["POST"])
+def salvar_compra():
+    dados = request.get_json()
+    dados = request.get_json()
+    data = dados.get("data_comp")
+    nome = dados.get("nome_comp")
+    banco = dados.get("banco_comp")
+    loja = dados.get("loja_comp")
+    valor_total = dados.get("valor_total_comp")
+    qtd_parcela = dados.get("qtd_parcela_comp")
+
+    print(type(data))
+    print(data)
+
+    conexao = conecta_banco()
+    cursor = conexao.cursor(buffered=True)
+    #print("VALOR TOTAL: ", valor_total)
+    #print("PARCELAS: ", qtd_parcela)
+
+    # encontrando id do nome
+    sql_id_nome = "SELECT id_pessoa FROM pessoa WHERE nome = %s"
+    cursor.execute(sql_id_nome, (nome,))
+    id_pessoa = cursor.fetchone()[0]
+    #print("nome pessoa: ", nome)
+    #print("id pessoa: ", id_pessoa)
+
+    # encontrando id do banco
+    sql_id_banco = "SELECT id_banco FROM banco WHERE nome = %s"
+    cursor.execute(sql_id_banco, (banco,))
+    id_banco = cursor.fetchone()[0]
+    #print("nome banco: ", banco)
+    #print("id banco: ", id_banco)
+
+    # encontrando id da loja
+    sql_id_loja = "SELECT id_lojasite FROM lojasite WHERE nome = %s"
+    cursor.execute(sql_id_loja, (loja,))
+    id_loja = cursor.fetchone()[0]
+    #print("nome loja: ", loja)
+    #print("id loja: ", id_loja)
+
+    sql_salvar = "INSERT INTO compra " \
+    "(id_pessoa, id_banco, id_lojasite, data_compra, valor_total, qtd_parcela) VALUES" \
+    "(%s, %s, %s, %s, %s, %s)"
+    cursor.execute(sql_salvar, (id_pessoa, id_banco, id_loja, data, valor_total, qtd_parcela))
+    #print("valores salvos")
+
+    # gerando parcelas:
+    id_compra = cursor.lastrowid
+    gerador_parcela(
+        cursor,
+        id_compra,
+        data,
+        qtd_parcela,
+        valor_total
+    )    
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return jsonify(success=True, message="Compra adicionada!"), 200
+
+@compra_bp.route("/compra/excluir", methods=["DELETE"])
+def exclui_compra():
+    dados = request.get_json()
+    codigo = dados.get("condigo_comp")
+    
+    conexao = conecta_banco()
+    cursor = conexao.cursor()
+
+    cursor.execute("DELETE FROM parcela WHERE id_compra = %s", (codigo,))
+    cursor.execute("DELETE FROM compra WHERE id_compra = %s", (codigo,))
+    conexao.commit()
+
+    return jsonify({"success":"elemento excluido"}), 200
+
+@compra_bp.route("/compra/verifica_input/<tipo>")
+def buscar(tipo):
+    print("tipo recebido: ", tipo)
+    dado = request.args.get("q", "")
+    print("digitado: ", dado)
+    conexao = conecta_banco()
+    cursor = conexao.cursor()
+
+    if tipo == "pessoa":
+        cursor.execute("SELECT nome FROM pessoa WHERE nome LIKE %s LIMIT 10", (f"%{dado}%",))
+    elif tipo == "banco":
+        cursor.execute("SELECT nome FROM banco WHERE nome LIKE %s LIMIT 10", (f"%{dado}%",))
+    elif tipo == "loja":
+        cursor.execute("SELECT nome FROM lojasite WHERE nome LIKE %s LIMIT 10", (f"%{dado}%",))
+
+    else:
+        return jsonify([]), 400
+
+    resultado = [linha[0] for linha in cursor.fetchall()]
+    print(resultado)
+    cursor.close()
+    conexao.close()
+
+    return jsonify(resultado)
+    
+@compra_bp.route("/compra/reembolso", methods=["POST"])
+def salvar_reembolso():
+    dados = request.get_json()
+    codigo_compra = dados.get("codigo")
+    valor_reembolso = dados.get("valor")
+    data_reembolso = dados.get("data")
+
+    conexao = conecta_banco()
+    cursor = conexao.cursor()
+
+    sql = "INSERT INTO reembolso (id_compra, valor_reembolso, data_reembolso) " \
+    "VALUES (%s, %s, %s)"
+    
+    cursor.execute(sql, (codigo_compra, valor_reembolso, data_reembolso))
+    conexao.commit()
+    
+    cursor.close()
+    conexao.close()
+
+
+    return jsonify({"sucesso":"reembolso registrado!"}), 201
+
+@compra_bp.route("/compra/edicao", methods=["PUT"])
+def editar_compra():
+    dados = request.get_json()
+    id_compra = dados.get("id")
+    data = dados.get("data")
+    nome = dados.get("nome")
+    banco = dados.get("banco")
+    loja = dados.get("loja")
+    valor_total = dados.get("valor_total")
+    qtd_parcela = dados.get("qtd_parcela")
+
+    conexao = conecta_banco()
+    cursor = conexao.cursor(buffered=True)
+
+    cursor.execute("SELECT id_pessoa FROM pessoa WHERE nome = %s", (nome,))
+    id_pessoa = cursor.fetchone()[0]
+    print(id_pessoa)
+
+    cursor.execute("SELECT id_banco FROM banco WHERE nome = %s", (banco,))
+    id_banco = cursor.fetchone()[0]
+
+    cursor.execute("SELECT id_lojasite FROM lojasite WHERE nome = %s", (loja,))
+    id_loja = cursor.fetchone()[0]
+
+    print("ID:", id_compra)
+    print("Pessoa:", id_pessoa)
+    print("Banco:", id_banco)
+    print("Loja:", id_loja)
+    print("Data:", data)
+    print("Valor:", valor_total)
+    print("Parcelas:", qtd_parcela)
+
+    edicao = "UPDATE compra SET id_pessoa = %s, id_banco = %s, id_lojasite = %s, " \
+    "data_compra = %s, valor_total = %s, qtd_parcela = %s WHERE id_compra = %s"
+
+    cursor.execute(edicao, (id_pessoa, id_banco, id_loja, data, valor_total, qtd_parcela, id_compra))
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return jsonify({"a":"b"})
+
+# adicionando parcelas a cada compra
+def gerador_parcela(cursor, id_compra, data_compra, qtd_parcela, valor_total):
+    print("aaa")
+    qtd_parcela = int(qtd_parcela)
+    data_compra = datetime.strptime(data_compra,"%Y-%m-%d").date()
+
+    valor_parcela = round(float(valor_total) / qtd_parcela, 2)
+
+    if data_compra.day <= 10: 
+        primeira_parc = date(
+            data_compra.year,
+            data_compra.month,
+            17
+        )
+    # compra feita depois ddo fechamento
+    else:
+        # se no final do ano
+        if data_compra.month == 12:
+            ano = data_compra.year + 1
+            mes = 1
+        else:
+            ano = data_compra.year
+            mes = data_compra.month + 1
+    
+        primeira_parc = date(ano, mes, 17)
+
+    sql = "INSERT INTO parcela (id_compra, numero_parcela, valor_parcela, data_vencimento) VALUES (%s,%s,%s,%s)"
+
+    for i in range(1, qtd_parcela+1):
+        data_vencimento = primeira_parc + relativedelta(months=i - 1)
+        cursor.execute(sql, (id_compra, i, valor_parcela, data_vencimento))
+        print(i, data_vencimento)
+
+
+"""
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
+"""
