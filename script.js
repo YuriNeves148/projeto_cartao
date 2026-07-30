@@ -17,6 +17,6 @@ window.lista_loja_func = lista_loja_func;
 import { historico_compra } from "./script/compra.js";
 window.historico_compra = historico_compra;
 
-import { lista_historico, faturas } from "./script/home.js";
-window.lista_historico = lista_historico;
+import { lista_historico_home, faturas } from "./script/home.js";
+window.lista_historico_home = lista_historico_home;
 window.faturas = faturas;

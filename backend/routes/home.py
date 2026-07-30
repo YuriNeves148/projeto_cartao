@@ -26,26 +26,28 @@ def lista_historico():
     if mes is None:
         return jsonify({"erro":"selecione um mes para prosseguir"})
     mes_sql = int(mes) + 1
+    print("mes escolhido: ",mes_sql)
     ano = int(ano)
     # resolvendo problema de fatura
-    data_fim = date(ano, mes_sql, 9)
-
-    data_inicio = data_fim - relativedelta(months=1)
-    data_inicio = data_inicio.replace(day=10)
-    print(data_inicio)
-    print(data_fim)
-    sql = "select pessoa.nome as nome_pessoa, banco.nome as nome_banco, " \
-    "lojasite.nome as onde, compra.data_compra, valor_total, qtd_parcela, " \
-    "(compra.valor_total / compra.qtd_parcela) as valor_parcela " \
-    "from compra join pessoa on pessoa.id_pessoa = compra.id_pessoa " \
-    "join banco on banco.id_banco = compra.id_banco " \
-    "join lojasite on lojasite.id_lojasite = compra.id_lojasite " \
-    "WHERE compra.data_compra BETWEEN %s AND %s " \
-    "order by compra.id_compra asc;"
-
-    cursor.execute(sql,(data_inicio, data_fim,))
-    dado = cursor.fetchall()
+    data_fim = date(ano, mes_sql, 17)
+    print("data dde vencimento: ", data_fim)
+    #data_inicio = data_fim - relativedelta(months=1)
+    #data_inicio = data_inicio.replace(day=10)
+    #print(data_inicio)
+    #print(data_fim)
+    sql = "select compra.data_compra, pessoa.nome as pessoa, banco.nome as banco, compra.valor_total, " \
+    "compra.qtd_parcela, (compra.valor_total/compra.qtd_parcela) as valor_parcela, lojasite.nome as lojasite " \
+    "from compra " \
+    "join parcela on compra.id_compra = parcela.id_compra " \
+    "join pessoa on compra.id_pessoa = pessoa.id_pessoa " \
+    "join banco on compra.id_banco = banco.id_banco " \
+    "join lojasite on compra.id_lojasite = lojasite.id_lojasite " \
+    "where parcela.data_vencimento = %s;"
     
+
+    cursor.execute(sql, (data_fim,))
+    dado = cursor.fetchall()
+    print("DADOS: ",dado)
     cursor.close()
     conexao.close()
 

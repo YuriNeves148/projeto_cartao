@@ -49,7 +49,7 @@
             <div id="informacoes">
               <div id="home">
                 <nav id="cabecalho_home">
-                  <p>Escolha o mês:</p>
+                  <p>Escolha o mês para ver os dados de compra:</p>
                   <select name="sec_mes" id="escolha_mes">
                     <option value="0">Janeiro</option>
                     <option value="1">Fevereiro</option>
@@ -81,7 +81,7 @@
             </div>
             <div id="historico_fundo">
               <div class="conteudo_historico">
-                <h3>histórico de compras</h3>
+                <h3>histórico de compras do mês selecionado</h3>
                 <div id="sumario_historico">
                   <p>data compra</p>
                   <p>nome</p>
@@ -301,34 +301,13 @@
     <!-- área home -->
     <script>
       window.addEventListener("DOMContentLoaded", () => {
-        lista_historico("lista_pessoa_con");
-      });
-    </script>
-    <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        faturas("valor_nubank");
-      });
-    </script>
-    <!-- area de criação -->
-    <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        lista_pessoa_func("lista_historico");
-      });
-    </script>
-    <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        lista_banco_func("lista_banco_con");
-      });
-    </script>
-    <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        lista_loja_func("lista_loja_cont");
-      });
-    </script>
-    <!-- area de compra -->
-    <script>
-      window.addEventListener("DOMContentLoaded", () => {
+        lista_historico_home("lista_historico");
         historico_compra("hist_lista_cont");
+        lista_loja_func("lista_loja_cont");
+        lista_banco_func("lista_banco_con");
+        lista_pessoa_func("lista_historico");
+        faturas("valor_nubank");
+        lista_pessoa_func("lista_pessoa_cont");
       });
     </script>
   </body>

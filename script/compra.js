@@ -153,14 +153,15 @@ btn_excluir_compra.addEventListener("click", async () => {
   const valor_loja = loja.value.trim();
   const valor_valor_total = valor_total.value.trim();
   const valor_qtd_parcela = qtd_parcela.value.trim();
+  console.log(`valor: ${valor_codigo}`);
   if (
-    valor_codigo.value === "" ||
-    valor_data.value === "" ||
-    valor_nome.value === "" ||
-    valor_banco.value === "" ||
-    valor_loja.value === "" ||
-    valor_valor_total.value === "" ||
-    valor_qtd_parcela.value === ""
+    valor_codigo === "" ||
+    valor_data === "" ||
+    valor_nome === "" ||
+    valor_banco === "" ||
+    valor_loja === "" ||
+    valor_valor_total === "" ||
+    valor_qtd_parcela === ""
   ) {
     alert("Preencha todos os campos para salvar a compra.");
     return;
@@ -324,11 +325,23 @@ btn_salvar_reembolso.addEventListener("click", async () => {
 });
 
 btn_edita_compra.addEventListener("click", async () => {
-  if (idEditandoCompra === null) {
+  if (codigo.value === "") {
     alert("Selecione um item para editar.");
     return;
   }
 
+  if (
+    codigo.value === "" ||
+    nome.value === "" ||
+    data.value === "" ||
+    banco.value === "" ||
+    loja.value === "" ||
+    qtd_parcela.value === ""
+  ) {
+    alert("Preencha todos os campos para salvar a edição.");
+    return;
+  }
+  console.log(dataEditandoCompra);
   const data_recebida = new Date(dataEditandoCompra);
   const data_formatada = data_recebida.toISOString().split("T")[0];
 

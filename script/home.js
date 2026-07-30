@@ -7,21 +7,29 @@ function mostrar(id) {
 window.mostrar = mostrar;
 const api_url = "http://127.0.0.1:5000";
 
-const mesAtual = new Date().getMonth();
+const data = new Date().getMonth();
 const mesSelecionado = document.getElementById("escolha_mes");
-mesSelecionado.value = mesAtual;
+mesSelecionado.value = data;
+// mes atual como valor inicial do select
+mesSelecionado.value = new Date().getMonth();
 
 const listaa_historico = document.getElementById("lista_historico");
 const valor_fatura_nubank = document.getElementById("valor_nubank");
 const valor_fatura_c6 = document.getElementById("valor_c6");
 
 // área HOME
-export async function lista_historico() {
-  const resposta = await fetch(`${api_url}/home/lista_historico`);
+export async function lista_historico_home(mes) {
+  //console.log("mesSelecionoado: ", mesSelecionado.value);
+
+  const resposta = await fetch(
+    `${api_url}/home/lista_historico?mes=${mesSelecionado.value}`,
+  );
+
   if (!resposta.ok) {
     alert("Erro ao acessar ao exibir a lista.");
   }
   const dado = await resposta.json();
+  console.log(dado);
   listaa_historico.innerHTML = "";
 
   dado.forEach((item) => {
@@ -30,21 +38,26 @@ export async function lista_historico() {
     const novo_item = document.createElement("li");
     novo_item.innerHTML = `
     <span class="data">${dataFormato}</span>
-    <span class="nome">${item.nome_pessoa}</span>
-    <span class="banco">${item.nome_banco}</span>
-    <span class="onde">${item.onde}</span>
+    <span class="nome">${item.pessoa}</span>
+    <span class="banco">${item.banco}</span>
+    <span class="onde">${item.lojasite}</span>
     <span class="valor">${parseFloat(item.valor_total).toFixed(2)}</span>
     <span class="valor">${item.qtd_parcela}</span>
     <span class="valor">${parseFloat(item.valor_parcela).toFixed(2)}</span>
-
 `;
-
     listaa_historico.appendChild(novo_item);
   });
+
+  mesSelecionado.addEventListener("change", () => {
+    lista_historico_home(mesSelecionado.value);
+  });
+  lista_historico_home;
 }
 
-export async function faturas() {
-  const resposta = await fetch(`${api_url}/home/faturas`);
+export async function faturas(mes) {
+  const resposta = await fetch(
+    `${api_url}/home/faturas?mes=${mesSelecionado.value}`,
+  );
 
   if (!resposta.ok) {
     alert("Não foi possível exibir fatura da nubank.");
@@ -53,11 +66,17 @@ export async function faturas() {
   const dado = await resposta.json();
   valor_fatura_nubank.innerHTML = "";
   valor_fatura_c6.innerHTML = "";
+  //console.log(dado);
 
-  // mas que porra aconteceu aqui?
-  //console.log("fatura nubank: ", dado.fat_nu.fat_nu);
-  //console.log("fatura bb: ", dado.fat_bb.fat_nu);
-
-  valor_fatura_nubank.innerHTML = `${parseFloat(dado.fat_nu.fat_nu).toFixed(2)}`;
-  valor_fatura_c6.innerHTML = `${parseFloat(dado.fat_bb.fat_nu).toFixed(2)}`;
+  /*
+  dado => vindo da API; c6 => chave do jsonify; fat_c6 => coluna do banco de dados
+  console.log("fatura nubank: ", dado.c6.fat_c6);
+  console.log("fatura C6: ", dado.nubank.fat_nu);
+  */
+  valor_fatura_nubank.innerHTML = `${parseFloat(dado.nubank.fat_nu).toFixed(2)}`;
+  valor_fatura_c6.innerHTML = `${parseFloat(dado.c6.fat_c6).toFixed(2)}`;
+  mesSelecionado.addEventListener("change", () => {
+    faturas(mesSelecionado.value);
+  });
+  faturas;
 }
