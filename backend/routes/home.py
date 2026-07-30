@@ -19,18 +19,17 @@ def conecta_banco():
 def lista_historico():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
-    print("aaaaaaaaaaa\n\n")
 
     mes = request.args.get("mes")
     ano = request.args.get("ano", date.today().year)
     if mes is None:
         return jsonify({"erro":"selecione um mes para prosseguir"})
     mes_sql = int(mes) + 1
-    print("mes escolhido: ",mes_sql)
+    #print("mes escolhido: ",mes_sql)
     ano = int(ano)
     # resolvendo problema de fatura
     data_fim = date(ano, mes_sql, 17)
-    print("data dde vencimento: ", data_fim)
+    
     #data_inicio = data_fim - relativedelta(months=1)
     #data_inicio = data_inicio.replace(day=10)
     #print(data_inicio)
@@ -47,7 +46,7 @@ def lista_historico():
 
     cursor.execute(sql, (data_fim,))
     dado = cursor.fetchall()
-    print("DADOS: ",dado)
+    #print("DADOS: ",dado)
     cursor.close()
     conexao.close()
 
@@ -65,23 +64,32 @@ def faturas():
 
     mes_sql = int(mes) + 1
     ano = int(ano)
+    data_fim = date(ano, mes_sql, 17)
 
     # resolvendo problema de fatura
-    data_fim = date(ano, mes_sql, 9)
-    data_inicio = data_fim - relativedelta(months=1)
-    data_inicio = data_inicio.replace(day=10)
+    #data_fim = date(ano, mes_sql, 17)
+    #data_inicio = data_fim - relativedelta(months=1)
+    #data_inicio = data_inicio.replace(day=10)
 
     # selecionando para NUBANK
-    sql_nu = "SELECT SUM(valor_total/qtd_parcela) AS fat_nu FROM compra " \
-    "WHERE id_banco = 1 and compra.data_compra BETWEEN %s AND %s;"
-    cursor.execute(sql_nu, (data_inicio, data_fim))
+    sql_nu = "select sum(compra.valor_total/compra.qtd_parcela) as valor_fatura_nubank " \
+    "from compra " \
+    "join parcela on compra.id_compra = parcela.id_compra " \
+    "join banco on compra.id_banco = banco.id_banco " \
+    "where parcela.data_vencimento = %s " \
+    "and banco.nome = 'Nubank';"
+    cursor.execute(sql_nu, (data_fim,))
     fatura_nu = cursor.fetchone()
 
     # selecionando para C6
-    sql_bb = "select SUM(valor_total/qtd_parcela) as fat_c6 from compra " \
-    "JOIN banco " \
-    "WHERE banco.nome = 'C6' and compra.data_compra BETWEEN %s AND %s;"
-    cursor.execute(sql_bb, (data_inicio, data_fim))
+    sql_bb = "select sum(compra.valor_total/compra.qtd_parcela) as valor_fatura_c6 " \
+    "from compra " \
+    "join parcela on compra.id_compra = parcela.id_compra " \
+    "join banco on compra.id_banco = banco.id_banco " \
+    "where parcela.data_vencimento = %s " \
+    "and banco.nome = 'C6';"
+
+    cursor.execute(sql_bb, (data_fim,))
     fatura_c6 = cursor.fetchone()
 
     print("FATURA NUBANK:", fatura_nu)

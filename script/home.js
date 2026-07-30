@@ -29,7 +29,7 @@ export async function lista_historico_home(mes) {
     alert("Erro ao acessar ao exibir a lista.");
   }
   const dado = await resposta.json();
-  console.log(dado);
+  //console.log(dado);
   listaa_historico.innerHTML = "";
 
   dado.forEach((item) => {
@@ -68,13 +68,13 @@ export async function faturas(mes) {
   valor_fatura_c6.innerHTML = "";
   //console.log(dado);
 
-  /*
-  dado => vindo da API; c6 => chave do jsonify; fat_c6 => coluna do banco de dados
-  console.log("fatura nubank: ", dado.c6.fat_c6);
-  console.log("fatura C6: ", dado.nubank.fat_nu);
-  */
-  valor_fatura_nubank.innerHTML = `${parseFloat(dado.nubank.fat_nu).toFixed(2)}`;
-  valor_fatura_c6.innerHTML = `${parseFloat(dado.c6.fat_c6).toFixed(2)}`;
+  //dado => vindo da API; c6 => chave do jsonify; fat_c6 => coluna do banco de dados
+  console.log("fatura nubank: ", dado.nubank.valor_fatura_nubank);
+  console.log("fatura C6: ", dado.c6.valor_fatura_c6);
+
+  valor_fatura_nubank.innerHTML = `${parseFloat(dado.nubank.valor_fatura_nubank).toFixed(2)}`;
+  valor_fatura_c6.innerHTML = `${parseFloat(dado.c6.valor_fatura_c6).toFixed(2)}`;
+
   mesSelecionado.addEventListener("change", () => {
     faturas(mesSelecionado.value);
   });
