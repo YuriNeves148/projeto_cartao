@@ -92,8 +92,8 @@ def faturas():
     cursor.execute(sql_bb, (data_fim,))
     fatura_c6 = cursor.fetchone()
 
-    print("FATURA NUBANK:", fatura_nu)
-    print("FATURA C6:", fatura_c6)
+    #print("FATURA NUBANK:", fatura_nu)
+    #print("FATURA C6:", fatura_c6)
 
     cursor.close()
     conexao.close()

@@ -69,8 +69,8 @@ export async function faturas(mes) {
   //console.log(dado);
 
   //dado => vindo da API; c6 => chave do jsonify; fat_c6 => coluna do banco de dados
-  console.log("fatura nubank: ", dado.nubank.valor_fatura_nubank);
-  console.log("fatura C6: ", dado.c6.valor_fatura_c6);
+  //console.log("fatura nubank: ", dado.nubank.valor_fatura_nubank);
+  //console.log("fatura C6: ", dado.c6.valor_fatura_c6);
 
   valor_fatura_nubank.innerHTML = `${parseFloat(dado.nubank.valor_fatura_nubank).toFixed(2)}`;
   valor_fatura_c6.innerHTML = `${parseFloat(dado.c6.valor_fatura_c6).toFixed(2)}`;

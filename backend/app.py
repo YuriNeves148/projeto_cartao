@@ -4,7 +4,7 @@ from flask_cors import CORS
 from routes.compra import compra_bp
 from routes.home import home_bp
 from routes.criacao import criacao_bp
-from routes.fatura import fatura_db
+from routes.individual import individual_db
 
 app = Flask(__name__)
 CORS(app)
@@ -12,7 +12,7 @@ CORS(app)
 app.register_blueprint(compra_bp)
 app.register_blueprint(home_bp)
 app.register_blueprint(criacao_bp)
-app.register_blueprint(fatura_db)
+app.register_blueprint(individual_db)
 
 if __name__ == "__main__":
     app.run(debug=True)

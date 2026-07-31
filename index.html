@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./estilizacao/style_home.css" />
     <link rel="stylesheet" href="./estilizacao/style_criacao.css" />
     <link rel="stylesheet" href="./estilizacao/style_compra.css" />
-    <link rel="stylesheet" href="./estilizacao/style_fatura.css" />
+    <link rel="stylesheet" href="./estilizacao/style_individual.css" />
   </head>
   <body>
     <div id="fundo">
@@ -16,7 +16,9 @@
           <nav>
             <button onclick="mostrar('sec_home')">área home</button>
             <button onclick="mostrar('sec_criacao')">área de criação</button>
-            <button onclick="mostrar('sec_fatura')">fatura</button>
+            <button onclick="mostrar('sec_individual')">
+              gastos individuais
+            </button>
             <button onclick="mostrar('sec_compra')">área de compras</button>
           </nav>
           <!-- janela para reembolso -->
@@ -168,57 +170,36 @@
             </div>
           </div>
         </section>
-        <section id="sec_fatura" class="pagina">
-          <div id="fundo_fatura">
-            <div id="secao_cartao">
-              <div id="secao_nubank">
-                <h2>CARTÃO NUBANK</h2>
-                <nav id="cabecalho_nubank">
-                  <input type="date" />
-                  <button id="btn_buscar_nubank">buscar</button>
-                </nav>
-                <div id="fundo_fatura_nubank">
-                  <div id="legenda_nubank">
-                    <span><strong>data do vencimento</strong></span>
-                    <span><strong>nome</strong></span>
-                    <span><strong>onde</strong></span>
-                    <span><strong>parc. faltantes</strong></span>
-                    <span><strong>valor da parcela</strong></span>
-                  </div>
-                  <div id="conteudo_nubank">
-                    <ul id="lista_fatura_nubank"></ul>
-                    <!-- lista vinda do js -->
-                    <div id="fundo_valor_fatura_nubank">
-                      <label>valor da fatura: </label>
-                      <ul id="valor_fatura_nubank"></ul>
-                      <!-- criacao de li dentro do js com a soma dos valores -->
-                    </div>
-                  </div>
+        <section id="sec_individual" class="pagina">
+          <div id="fundo_individual">
+            <nav id="nav_individual">
+              <p>Escolha o mês para ver os dados de compra:</p>
+              <select name="sec_mes" id="escolha_mes_individual">
+                <option value="0">Janeiro</option>
+                <option value="1">Fevereiro</option>
+                <option value="2">Março</option>
+                <option value="3">Abril</option>
+                <option value="4">Maio</option>
+                <option value="5">Junho</option>
+                <option value="6">Julho</option>
+                <option value="7">Agosto</option>
+                <option value="8">Setembro</option>
+                <option value="9">Outubro</option>
+                <option value="10">Novembro</option>
+                <option value="11">Dezembro</option>
+              </select>
+            </nav>
+            <div id="fundo_mostra_banco">
+              <div id="fundo_info_nubank">
+                <h1>fatura nubank</h1>
+                <div id="fundo_gasto_pessoa_nubank">
+                  <ul id="lista_gasto_nubank"></ul>
                 </div>
               </div>
-              <div id="secao_c6">
-                <h2>CARTÃO C6</h2>
-                <nav id="cabecalho_c6">
-                  <input type="date" />
-                  <button id="btn_buscar_c6">buscar</button>
-                </nav>
-                <div id="fundo_fatura_c6">
-                  <div id="legenda_c6">
-                    <span>data</span>
-                    <span>nome</span>
-                    <span>onde</span>
-                    <span>parc. faltantes</span>
-                    <span>valor da parcela</span>
-                  </div>
-                  <div id="conteudo_c6">
-                    <ul id="lista_fatura_c6"></ul>
-                    <!-- lista vinda do js -->
-                    <div id="fundo_valor_fatura_c6">
-                      <label>valor da fatura: </label>
-                      <ul id="valor_fatura_c6"></ul>
-                      <!-- criacao de li dentro do js com a soma dos valores -->
-                    </div>
-                  </div>
+              <div id="fundo_info_c6">
+                <h1>fatura c6</h1>
+                <div id="fundo_gasto_pessoa_c6">
+                  <ul id="lista_gasto_c6"></ul>
                 </div>
               </div>
             </div>
@@ -303,6 +284,7 @@
       window.addEventListener("DOMContentLoaded", () => {
         lista_historico_home("lista_historico");
         historico_compra("hist_lista_cont");
+        // criacao
         lista_loja_func("lista_loja_cont");
         lista_banco_func("lista_banco_con");
         lista_pessoa_func("lista_historico");
