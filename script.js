@@ -14,8 +14,9 @@ window.lista_banco_func = lista_banco_func;
 window.lista_loja_func = lista_loja_func;
 
 // INDIVIDUAL
-import { lista_individual_nu } from "./script/individual.js";
+import { lista_individual_nu, fatura } from "./script/individual.js";
 window.lista_individual_nu = lista_individual_nu;
+window.fatura = fatura;
 
 // COMPRA
 import { historico_compra } from "./script/compra.js";

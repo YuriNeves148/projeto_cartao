@@ -2,6 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: 2px solid black;
+  border-radius: 18px;
+  width: 60%;
+  margin: 0 auto;
+  padding: 19px;
   & p {
     font-size: 23px;
     padding-bottom: 5px;
@@ -13,13 +18,10 @@
   padding: 3px;
 }
 #fundo_mostra_banco {
-  border: 2px solid black;
-  border-radius: 10px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding: 10px;
   height: 71vh;
-  margin-top: 30px;
 }
 #fundo_info_nubank,
 #fundo_info_c6 {
@@ -30,4 +32,40 @@
   & h1 {
     text-align: center;
   }
+}
+.sumario_lista {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  text-align: center;
+  width: 80%;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+#lista_gasto_nubank,
+#lista_gasto_c6 {
+  list-style: none;
+  font-size: 23px;
+
+  & li {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    text-align: center;
+    border-bottom: 2px solid black;
+    margin-top: 5px;
+    width: 80%;
+    margin: 0 auto;
+  }
+}
+.fundo_fat_individual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#fatura_total_nu,
+#fatura_total_c6 {
+  position: fixed;
+  bottom: 12%;
+  font-size: 22px;
 }

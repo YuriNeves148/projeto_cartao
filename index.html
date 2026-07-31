@@ -192,14 +192,29 @@
             <div id="fundo_mostra_banco">
               <div id="fundo_info_nubank">
                 <h1>fatura nubank</h1>
+                <div class="sumario_lista">
+                  <h4>nomes</h4>
+                  <h4>gastos</h4>
+                </div>
                 <div id="fundo_gasto_pessoa_nubank">
                   <ul id="lista_gasto_nubank"></ul>
                 </div>
+                <div class="fundo_fat_individual">
+                  <ul id="fatura_total_nu"></ul>
+                </div>
               </div>
+
               <div id="fundo_info_c6">
                 <h1>fatura c6</h1>
+                <div class="sumario_lista">
+                  <h4>nomes</h4>
+                  <h4>gastos</h4>
+                </div>
                 <div id="fundo_gasto_pessoa_c6">
                   <ul id="lista_gasto_c6"></ul>
+                </div>
+                <div class="fundo_fat_individual">
+                  <ul id="fatura_total_c6"></ul>
                 </div>
               </div>
             </div>
@@ -290,6 +305,7 @@
         lista_pessoa_func("lista_historico");
         faturas("valor_nubank");
         lista_pessoa_func("lista_pessoa_cont");
+        fatura(".valor_fat_individual");
       });
     </script>
   </body>
