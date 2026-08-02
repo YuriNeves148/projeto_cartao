@@ -76,7 +76,6 @@ def fatura():
     cursor.execute(sql_c6, (data_vencimento,))
     dados_c6 = cursor.fetchall()
 
-
     #print("fatura nu: ", dados_nu)
     #print("fatura c6: ", dados_c6)
     
@@ -84,6 +83,49 @@ def fatura():
     conexao.close()
 
     return jsonify({"nubank":dados_nu, "c6": dados_c6})
+
+@individual_db.route("/individual/reembolso/")
+def reembolso():
+    conexao = conecta_banco()
+    cursor = conexao.cursor(dictionary=True)
+    
+    mes = request.args.get("mes")
+    mes = int(mes) +1
+    
+    ano = request.args.get("ano", date.today().year)
+    ano = int(ano)
+
+    data_inicio = date(ano, mes, 10)
+    data_final = date(ano, mes+1, 9)
+    #print("\n\n\n")
+    #print(data_inicio, data_final)
+
+    sql_nu = "select compra.id_compra as codigo_compra, pessoa.nome as nome, " \
+    "reembolso.data_reembolso as data_reembolso, reembolso.valor_reembolso as valor_reembolso " \
+    "from compra " \
+    "join reembolso on compra.id_compra = reembolso.id_compra " \
+    "join banco on compra.id_banco = banco.id_banco " \
+    "join pessoa on compra.id_pessoa = pessoa.id_pessoa " \
+    "where reembolso.data_reembolso between %s and %s and banco.nome = 'Nubank';"
+    cursor.execute(sql_nu, (data_inicio, data_final))
+    encontra_reembolso_nu = cursor.fetchall()
+    print("reembolso da nubank: ", encontra_reembolso_nu)
+    
+    sql_c6 = "select compra.id_compra as codigo_compra, pessoa.nome as nome, " \
+    "reembolso.data_reembolso as data_reembolso, reembolso.valor_reembolso as valor_reembolso " \
+    "from compra " \
+    "join reembolso on compra.id_compra = reembolso.id_compra " \
+    "join banco on compra.id_banco = banco.id_banco " \
+    "join pessoa on compra.id_pessoa = pessoa.id_pessoa " \
+    "where reembolso.data_reembolso between %s and %s and banco.nome = 'C6';"
+    cursor.execute(sql_c6, (data_inicio, data_final))
+    encontra_reembolso_c6 = cursor.fetchall()
+    print("\n\nreembolso da C6: ", encontra_reembolso_c6)
+    
+    cursor.close()
+    conexao.close()
+
+    return jsonify(encontra_reembolso_nu, encontra_reembolso_c6)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

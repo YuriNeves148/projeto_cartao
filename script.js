@@ -16,9 +16,11 @@ window.lista_loja_func = lista_loja_func;
 window.mostraAlerta = mostraAlerta;
 
 // INDIVIDUAL
-import { lista_individual_nu, fatura } from "./script/individual.js";
+import { lista_individual_nu, fatura, reembolso } from "./script/individual.js";
 window.lista_individual_nu = lista_individual_nu;
 window.fatura = fatura;
+window.mostraAlerta = mostraAlerta;
+window.reembolso = reembolso;
 
 // COMPRA
 import { historico_compra } from "./script/compra.js";

@@ -7,6 +7,11 @@ const lista_ind_c6 = document.getElementById("lista_gasto_c6");
 const fatura_total_nu = document.getElementById("fatura_total_nu");
 const fatura_total_c6 = document.getElementById("fatura_total_c6");
 
+const reembolso_fatura_nubank = document.getElementById(
+  "reembolso_fatura_nubank",
+);
+const reembolso_fatura_c6 = document.getElementById("reembolso_fatura_c6");
+
 const data = new Date().getMonth();
 mesSelecionado.value = data;
 mesSelecionado.value = new Date().getMonth();
@@ -79,10 +84,82 @@ export async function fatura(mes) {
     fat_nu = 0.0;
   }
 
-  fatura_total_nu.innerHTML = `<strong>R$ ${fat_nu}</strong>`;
-  fatura_total_c6.innerHTML = `<strong>R$ ${fat_c6}</strong>`;
+  fatura_total_nu.innerHTML = `total: <strong>R$ ${fat_nu}</strong>`;
+  fatura_total_c6.innerHTML = `total: <strong>R$ ${fat_c6}</strong>`;
   mesSelecionado.addEventListener("change", () => {
     fatura(mesSelecionado.value);
   });
 }
 fatura();
+
+export async function reembolso(mes) {
+  const resposta = await fetch(
+    `${api_url}/individual/reembolso?mes=${mesSelecionado.value}`,
+  );
+
+  if (!resposta.ok) {
+    mostraAlerta("erro", "Nao foi possível se conectar a API.");
+    return;
+  }
+  const dado = await resposta.json();
+  const reembolso_nubank = dado[0];
+  const reembolso_c6 = dado[1];
+
+  console.log(
+    `Reembolso Nubank (mes: ${parseInt(mesSelecionado.value) + 1})`,
+    reembolso_nubank,
+  );
+  console.log(
+    `Reembolso C6 (mes: ${parseInt(mesSelecionado.value) + 1})`,
+    reembolso_c6,
+  );
+
+  reembolso_fatura_nubank.innerHTML = "";
+  reembolso_fatura_c6.innerHTML = "";
+
+  reembolso_nubank.forEach((item) => {
+    const recebe_data = new Date(item.data_reembolso);
+    const formata_data = recebe_data.toLocaleDateString("pt-BR", {
+      timeZone: "UTC",
+    });
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span>${item.codigo_compra}</span>
+      <span>${formata_data}</span>
+      <span>${item.nome}</span>
+      <span><strong>+ ${item.valor_reembolso}</strong></span>
+    `;
+    reembolso_fatura_nubank.appendChild(li);
+  });
+
+  reembolso_c6.forEach((item) => {
+    const recebe_data = new Date(item.data_reembolso);
+    const formata_data = recebe_data.toLocaleDateString("pt-BR", {
+      timeZone: "UTC",
+    });
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span>${item.codigo_compra}</span>
+      <span>${formata_data}</span>
+      <span>${item.nome}</span>
+      <span><strong>+ ${item.valor_reembolso}</strong></span>
+    `;
+    reembolso_fatura_c6.appendChild(li);
+  });
+
+  mesSelecionado.addEventListener("change", () => {
+    reembolso(mesSelecionado.value);
+  });
+}
+reembolso();
+
+export function mostraAlerta(tipo = "sucesso", mensagem) {
+  const alerta = document.getElementById("mensagem_alerta");
+
+  alerta.textContent = mensagem;
+  alerta.className = `mensagem_alerta ${tipo} mostrar`;
+
+  setTimeout(() => {
+    alerta.className = "mensagem_alerta";
+  }, 4000);
+}
