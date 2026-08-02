@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
 from flask import Blueprint
+from mysql.connector.errors import IntegrityError
 
 criacao_bp = Blueprint("criacao", __name__)
 
@@ -18,13 +19,19 @@ def conecta_banco():
 def adiciona_pessoa():
     dado = request.get_json()
     nome = dado.get("nome")
-    #print("NOME:", nome)
+    
     conexao = conecta_banco()
-    cursor = conexao.cursor()
+    cursor = conexao.cursor()   
+
+    cursor.execute("SELECT nome FROM pessoa WHERE nome = %s", (nome,))
+    encontra_nome = cursor.fetchone()
+
+    if encontra_nome is not None:
+        return jsonify({"erro":"Nome de pessoa já existente."}), 500
 
     cursor.execute("INSERT INTO pessoa (nome) VALUES (%s)", (nome,))
     conexao.commit()
-
+        
     cursor.close()
     conexao.close()
     
@@ -38,6 +45,12 @@ def adiciona_banco():
     conexao = conecta_banco()
     cursor = conexao.cursor()
 
+    cursor.execute("SELECT nome FROM banco WHERE nome = %s", (nome,))
+    encontra_nome = cursor.fetchone()
+
+    if encontra_nome is not None:
+        return jsonify({"erro":"Nome do banco já existente."}), 500
+    
     cursor.execute("INSERT INTO banco (nome) VALUES (%s)", (nome,))
     conexao.commit()
     
@@ -58,6 +71,12 @@ def adiciona_loja():
 
     conexao = conecta_banco()
     cursor = conexao.cursor()
+
+    cursor.execute("SELECT nome FROM lojasite WHERE nome = %s", (nome,))
+    encontra_nome = cursor.fetchone()
+
+    if encontra_nome is not None:
+        return jsonify({"erro":"Nome da lojao ou site já existente."}), 500
 
     cursor.execute("INSERT INTO lojasite (nome) VALUES (%s)", (nome,))
     conexao.commit()
@@ -119,13 +138,13 @@ def excluir_pessoa():
     conexao = conecta_banco()
     cursor = conexao.cursor()
 
-    # verifica se existe esse nome
-    cursor.execute("SELECT nome FROM pessoa WHERE nome = %s", (nome,))
-    encontra = cursor.fetchone()
-    if encontra is None:
-        return jsonify({"erro" : "Pessoa não encontrada"}), 404
+    # verifica se existe esse nome e se sim, pega o id_pessoa
+    cursor.execute("SELECT id_pessoa FROM pessoa WHERE nome = %s", (nome,))
+    encontra_id_pessoa = cursor.fetchone()
+    if encontra_id_pessoa is None:
+        return jsonify({"erro" : "Pessoa não encontrada.\nTente selecioná-la na lista."}), 404
 
-    cursor.execute("DELETE FROM pessoa WHERE nome = %s", (nome,))
+    cursor.execute("DELETE FROM pessoa WHERE id_pessoa = %s", (encontra_id_pessoa[0],))
     conexao.commit()
 
     cursor.close()
@@ -139,21 +158,21 @@ def excluir_loja():
     nome = dado.get("nome")
 
     conexao = conecta_banco()
-    cursor = conexao.cursor(dictionary=True)
+    cursor = conexao.cursor()
 
     # verfica se loja existe
     cursor.execute("SELECT nome FROM lojasite WHERE nome = %s", (nome,))
-    encontra = cursor.fetchone()
-    if encontra is None:
-        return jsonify({"erro" : "Nome da loja ou site não encontrado"}), 404
+    encontra_nome_lojasite = cursor.fetchone()
+    if encontra_nome_lojasite is None:
+        return jsonify({"erro" : "Loja ou site não encontrado.\nTente selecioná-lo na lista."}), 404
     
-    cursor.execute("DELETE FROM lojasite WHERE nome = %s", (nome,))
+    cursor.execute("DELETE FROM lojasite WHERE nome = %s", (encontra_nome_lojasite[0],))
     conexao.commit()
 
     cursor.close()
     conexao.close()
-    print(encontra)
-    return jsonify(encontra), 200
+
+    return jsonify(nome), 200
 
 @criacao_bp.route("/criacao/excluir_banco", methods=["DELETE"])
 def excluir_banco():
@@ -174,9 +193,10 @@ def excluir_banco():
 
     cursor.close()
     conexao.close()
+
     print(encontra)
 
-    return jsonify(encontra), 200
+    return jsonify({"sucesso":"Banco excluído com sucesso"}), 200
 
 @criacao_bp.route("/criacao/edita_pessoa", methods=["PUT"])
 def editar_pessoa():
@@ -186,6 +206,12 @@ def editar_pessoa():
 
     conexao = conecta_banco()
     cursor = conexao.cursor()
+
+    # verifica se o nome já existe
+    cursor.execute("SELECT nome FROM pessoa WHERE nome = %s", (nome,))
+    encontra_nome = cursor.fetchone()
+    if encontra_nome is not None:
+        return jsonify({"erro":"Nome já cadastrado na lista."}), 404
 
     cursor.execute("UPDATE pessoa SET nome = %s WHERE id_pessoa = %s", (nome, id))
     conexao.commit()
@@ -204,7 +230,13 @@ def editar_banco():
     conexao = conecta_banco()
     cursor = conexao.cursor()
 
-    cursor.execute("UPDATE banco SET nome = %s WHERE id_banco = %s", (nome, id))
+    cursor.execute("SELECT nome FROM pessoa WHERE nome = %s", (nome,))
+    verfica_nome = cursor.fetchone()
+
+    if verfica_nome is not None:
+        return jsonify({"erro" : "Nome do banco já cadastrado."}), 404
+
+    cursor.execute("UPDATE banco SET nome = %s WHERE id_banco = %s", (nome, id)), 200
     conexao.commit()
 
     cursor.close()
@@ -221,13 +253,19 @@ def editar_loja():
     conexao = conecta_banco()
     cursor = conexao.cursor()
 
+    cursor.execute("SELECT nome FROM lojasite WHERE nome = %s", (nome,))
+    verfica_nome = cursor.fetchone()
+
+    if verfica_nome is not None:
+        return jsonify({"erro" : "Nome da loja ou site já cadastrado."}), 404
+
     cursor.execute("UPDATE lojasite SET nome = %s WHERE id_lojasite = %s", (nome, id))
     conexao.commit()
 
     cursor.close()
     conexao.close()
 
-    return jsonify({"sucesso" : f"nome atualizado para: '{nome}'"})
+    return jsonify({"sucesso" : f"nome da loja/site atualizado para: '{nome}'"})
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

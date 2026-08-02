@@ -34,7 +34,7 @@ const lista_loja_cont = document.getElementById("lista_loja_cont");
 btn_adicionar_pessoa.addEventListener("click", async () => {
   const nome_pessoa = input_pessoa.value.trim();
   if (nome_pessoa === "") {
-    alert("Digite um nome antes de salvar!");
+    mostraAlerta("aviso", "Digite o nome da pessoa para adicionar!");
     return;
   }
   try {
@@ -45,20 +45,22 @@ btn_adicionar_pessoa.addEventListener("click", async () => {
     });
 
     if (!resposta.ok) {
-      alert("Falha ao salvar nome de pessoa");
+      mostraAlerta("erro", "Nome da pessoa já cadastrada!");
+      return;
     }
     const dado = await resposta.json();
     console.log("nome adicionado: ", dado);
     input_pessoa.value = "";
+    mostraAlerta("sucesso", "Pessoa cadastrada com sucesso!");
   } catch (erro) {
-    alert("Erro ao conectar com o banco");
+    mostraAlerta("erro", erro);
   }
 });
 
 btn_adicionar_banco.addEventListener("click", async () => {
   const nome_banco = input_banco.value.trim();
   if (nome_banco === "") {
-    alert("digite o nome do banco para salvar!");
+    mostraAlerta("aviso", "Digite do banco para adicionar!");
     return;
   }
   try {
@@ -68,20 +70,23 @@ btn_adicionar_banco.addEventListener("click", async () => {
       body: JSON.stringify({ nome: nome_banco }),
     });
     if (!resposta.ok) {
-      alert("Nao foi possivel salvar o nome do banco!");
+      mostraAlerta("erro", "Nome do banco já cadastrado!");
+      return;
     }
     const dado = await resposta.json();
     console.log("Banco adicionado: ", dado);
     input_banco.value = "";
+    mostraAlerta("sucesso", "Banco cadastrado com sucesso!");
   } catch (erro) {
-    alert("erro ao acesso a API (adicionar banco).");
+    mostraAlerta("erro", `erro: ${erro}`);
+    return;
   }
 });
 
 btn_adicionar_loja.addEventListener("click", async () => {
   const nome_loja = input_loja.value.trim();
   if (nome_loja === "") {
-    alert("Digite o nome da loja antes de salvar!");
+    mostraAlerta("aviso", "Digite da loja ou site para adicionar!");
     return;
   }
 
@@ -92,14 +97,15 @@ btn_adicionar_loja.addEventListener("click", async () => {
       body: JSON.stringify({ nome: nome_loja }),
     });
     if (!resposta.ok) {
-      alert("Erro ao acessar ao salvar loja.");
+      mostraAlerta("erro", "Nome da loja ou site já cadastrado!");
       return;
     }
     const dado = await resposta.json();
     console.log("loja adicionada: ", dado);
     input_loja.value = "";
+    mostraAlerta("sucesso", "Loja ou site cadastrado com sucesso!");
   } catch (erro) {
-    alert("Erro ao acessar a API (salvar loja).");
+    mostraAlerta("erro", `erro: ${erro}`);
   }
 });
 
@@ -107,7 +113,7 @@ btn_adicionar_loja.addEventListener("click", async () => {
 export async function lista_pessoa_func() {
   const resposta = await fetch(`${api_url}/criacao/lista_pessoa`);
   if (!resposta.ok) {
-    alert("Erro ao acessar a API (lista pessoa)");
+    mostraAlerta("erro", "Nome da loja ou site já cadastrado!");
     return;
   }
   lista_pessoa_cont.innerHTML = "";
@@ -146,6 +152,7 @@ export async function lista_banco_func() {
       nomeBancoEditando = secao.nome;
       idBancoEditando = secao.id_banco;
       console.log(`EDITANDO: ${idBancoEditando}. ${nomeBancoEditando}`);
+      input_banco.focus();
     });
   });
 }
@@ -177,7 +184,8 @@ export async function lista_loja_func() {
 btn_excluir_pessoa.addEventListener("click", async () => {
   const nome_pessoa = input_pessoa.value.trim();
   if (nome_pessoa === "") {
-    alert("Digite o nome da pessoa para excluir!");
+    mostraAlerta("aviso", "Digite o nome da pessoa para excluí-la!");
+    return;
   }
 
   try {
@@ -186,26 +194,26 @@ btn_excluir_pessoa.addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ pessoa: nome_pessoa }),
     });
-
-    const dado = await resposta.json();
     if (!resposta.ok) {
-      alert(dado.erro);
+      const v = await resposta.json();
+      console.log(v);
+      mostraAlerta("erro", `${v.erro}`);
       return;
     }
-    alert(`Pessoa excluída com sucesso!`);
-    console.log(dado);
+    const dado = await resposta.json();
+    mensagem_alerta("Pessoa deletada com sucesso", "sucesso");
+    console.log("retorno: ", dado);
     return;
   } catch (erro) {
-    console.error(erro);
-    alert("Erro ao excluir pessoa!");
+    console.error("Erro: ", erro);
+    mostraAlerta("erro", "Erro: ", v);
   }
 });
 
 btn_excluir_loja.addEventListener("click", async () => {
   const input = input_loja.value.trim();
-
   if (input === "") {
-    alert("Digite o nome da loja pu site para excluir.");
+    mostraAlerta("aviso", "Digite uma loja ou site para adicionar.");
     return;
   }
   try {
@@ -214,26 +222,29 @@ btn_excluir_loja.addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nome: input }),
     });
-    const dado = await resposta.json();
     if (!resposta.ok) {
-      console.log(dado.erro);
-      alert("Loja ou site inexistente.");
+      const v = await resposta.json();
+      console.log("resposta v: ", v);
+      mostraAlerta("erro", `${v.erro}`);
       return;
     }
+    const dado = await resposta.json();
     console.log(dado);
-    alert(`Loja '${dado.nome}' excluida com sucesso!"`);
+    mostraAlerta(
+      "sucesso",
+      `'${input_loja.value.trim()}' excluído com sucesso.`,
+    );
     input_loja.value = "";
     return;
   } catch (erro) {
-    alert("Erro encontrado: ", erro);
+    alert("erro: ", erro);
   }
 });
 
 btn_excluir_banco.addEventListener("click", async () => {
   const input = input_banco.value.trim();
-
   if (input === "") {
-    alert("Digite o nome do banco para excluir.");
+    mostraAlerta("aviso", "Digite o nome do banco para excluí-lo.");
     return;
   }
   try {
@@ -242,17 +253,17 @@ btn_excluir_banco.addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nome: input }),
     });
-    const dado = await resposta.json();
     if (!resposta.ok) {
-      console.log(dado.erro);
-      alert("Banco inexistente.");
+      const a = await resposta.json();
+      mostraAlerta("erro", `${a.erro}`);
       return;
     }
+    const dado = await resposta.json();
     console.log(dado);
-    alert(`Banco '${dado.nome}' excluido com sucesso!"`);
+    mostraAlerta("sucesso", `${dado.sucesso}`);
     input_banco.value = "";
   } catch (erro) {
-    alert("Erro encontrado: ", erro);
+    mostraAlerta("erro", "Erro: ", erro);
   }
 });
 
@@ -267,12 +278,11 @@ btn_editar_pessoa.addEventListener("click", async () => {
     input_orig_nome === null ||
     nome_alterado === ""
   ) {
-    alert("Clique no item que deseja alterar");
-    input_pessoa.value = "";
+    mostraAlerta("aviso", "Clique no nome da pessoa para editar.");
     return;
   }
   if (nome_alterado == input_orig_nome) {
-    alert("O nome é o mesmo do original");
+    mostraAlerta("aviso", "Não houve alteração no nome.");
     return;
   }
   try {
@@ -286,14 +296,16 @@ btn_editar_pessoa.addEventListener("click", async () => {
       }),
     });
     if (!resposta.ok) {
-      alert("Erro ao conectar com a API (editar nome)");
+      const v = await resposta.json();
+      mostraAlerta(
+        "erro",
+        "Esse nome já está sendo utilizado. Verifique a lista.",
+      );
       return;
     }
     const dado = await resposta.json();
-    console.log("Resposta ", dado);
     input_pessoa.value = "";
-    alert(dado.sucesso);
-    location.reload();
+    mostraAlerta("sucesso", `${dado.sucesso}`);
   } catch (erro) {
     console.error(dado.erro);
   }
@@ -303,19 +315,19 @@ btn_editar_banco.addEventListener("click", async () => {
   const input_orig_id_nome = idBancoEditando;
   const input_orig_nome = nomeBancoEditando;
   const nome_alterado = input_banco.value.trim();
-  console.log(input_orig_id_nome);
-  console.log(input_orig_nome);
+  //console.log("nome original da lista: ", input_orig_nome);
+  //console.log("nome final: ", nome_alterado);
   if (
     input_orig_id_nome === null ||
     input_orig_nome === null ||
     nome_alterado === ""
   ) {
-    alert("Clique no item que deseja alterar");
+    mostraAlerta("aviso", "Clique no nome do banco para editar.");
     input_banco.value = "";
     return;
   }
   if (nome_alterado == input_orig_nome) {
-    alert("O nome é o mesmo do original");
+    mostraAlerta("aviso", "Nome do banco não alterado.");
     return;
   }
   try {
@@ -329,14 +341,15 @@ btn_editar_banco.addEventListener("click", async () => {
       }),
     });
     if (!resposta.ok) {
-      alert("Erro ao conectar com a API (editar nome)");
+      const a = await resposta.json();
+      mostraAlerta("erro", a.erro);
+      input_banco.value = "";
       return;
     }
     const dado = await resposta.json();
-    console.log("Resposta ", dado);
     input_banco.value = "";
-    alert(dado.sucesso);
-    location.reload();
+    console.log("Resposta ", dado);
+    mostraAlerta("sucesso", dado.sucesso);
   } catch (erro) {
     console.error(dado.erro);
   }
@@ -353,12 +366,12 @@ btn_editar_loja.addEventListener("click", async () => {
     input_orig_nome === null ||
     nome_alterado === ""
   ) {
-    alert("Clique no item que deseja alterar");
+    mostraAlerta("aviso", "Clique no nome da loja/site para editar.");
     input_loja.value = "";
     return;
   }
   if (nome_alterado == input_orig_nome) {
-    alert("O nome é o mesmo do original");
+    mostraAlerta("aviso", "Nome da loja/site não teve alteração.");
     return;
   }
   try {
@@ -371,16 +384,28 @@ btn_editar_loja.addEventListener("click", async () => {
         nome_novo: nome_alterado,
       }),
     });
+
     if (!resposta.ok) {
-      alert("Erro ao conectar com a API (editar nome)");
+      const a = await resposta.json();
+      mostraAlerta("erro", a.erro);
       return;
     }
     const dado = await resposta.json();
-    console.log("Resposta ", dado);
+    console.log("Resposta ", dado.sucesso);
+    mostraAlerta("sucesso", dado.sucesso);
     input_loja.value = "";
-    alert(dado.sucesso);
-    location.reload();
   } catch (erro) {
     console.error(dado.erro);
   }
 });
+
+export function mostraAlerta(tipo = "sucesso", mensagem) {
+  const alerta = document.getElementById("mensagem_alerta");
+
+  alerta.textContent = mensagem;
+  alerta.className = `mensagem_alerta ${tipo} mostrar`;
+
+  setTimeout(() => {
+    alerta.className = "mensagem_alerta";
+  }, 4000);
+}

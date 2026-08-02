@@ -77,8 +77,8 @@ def fatura():
     dados_c6 = cursor.fetchall()
 
 
-    print("fatura nu: ", dados_nu)
-    print("fatura c6: ", dados_c6)
+    #print("fatura nu: ", dados_nu)
+    #print("fatura c6: ", dados_c6)
     
     cursor.close()
     conexao.close()

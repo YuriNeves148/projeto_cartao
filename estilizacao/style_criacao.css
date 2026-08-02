@@ -1,3 +1,37 @@
+.mensagem_alerta {
+  visibility: hidden;
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 1000;
+  opacity: 0;
+  font-size: 20px;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+.mostrar {
+  visibility: visible;
+  opacity: 1;
+}
+.sucesso {
+  background-color: #2e7d32;
+}
+.erro {
+  background-color: #c62828;
+}
+.aviso {
+  background-color: #f9a825;
+  color: #1a1a1a;
+  font-weight: bold;
+}
+
 #sec_criacao {
   border: 2px solid #1a1a1a;
   border-radius: 14px;

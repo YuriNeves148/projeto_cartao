@@ -8,10 +8,12 @@ import {
   lista_pessoa_func,
   lista_banco_func,
   lista_loja_func,
+  mostraAlerta,
 } from "./script/criacao.js";
 window.lista_pessoa_func = lista_pessoa_func;
 window.lista_banco_func = lista_banco_func;
 window.lista_loja_func = lista_loja_func;
+window.mostraAlerta = mostraAlerta;
 
 // INDIVIDUAL
 import { lista_individual_nu, fatura } from "./script/individual.js";
@@ -21,3 +23,4 @@ window.fatura = fatura;
 // COMPRA
 import { historico_compra } from "./script/compra.js";
 window.historico_compra = historico_compra;
+window.mostraAlerta = mostraAlerta;

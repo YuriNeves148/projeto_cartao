@@ -37,7 +37,7 @@ def lista_compra():
 @compra_bp.route("/compra/salvar", methods=["POST"])
 def salvar_compra():
     dados = request.get_json()
-    dados = request.get_json()
+    codigo = dados.get("valor_codigo")
     data = dados.get("data_comp")
     nome = dados.get("nome_comp")
     banco = dados.get("banco_comp")
@@ -45,40 +45,43 @@ def salvar_compra():
     valor_total = dados.get("valor_total_comp")
     qtd_parcela = dados.get("qtd_parcela_comp")
 
-    print(type(data))
-    print(data)
-
     conexao = conecta_banco()
     cursor = conexao.cursor(buffered=True)
-    #print("VALOR TOTAL: ", valor_total)
-    #print("PARCELAS: ", qtd_parcela)
 
+    # verificando se compra já existe
+    cursor.execute("SELECT id_compra FROM compra WHERE id_compra = %s", (codigo,))
+    verifica_compra = cursor.fetchone()
+    
+    if verifica_compra is not None:
+        print("\n\nNao salvar")
+        return jsonify({"cliclou":"Essa compra já existe. Apague os inputs e tente novamente."})
+    print("\n\nAcessa pessoa")
     # encontrando id do nome
     sql_id_nome = "SELECT id_pessoa FROM pessoa WHERE nome = %s"
     cursor.execute(sql_id_nome, (nome,))
-    id_pessoa = cursor.fetchone()[0]
-    #print("nome pessoa: ", nome)
-    #print("id pessoa: ", id_pessoa)
-
+    id_pessoa = cursor.fetchone()
+    if id_pessoa is None:
+        return jsonify({"mesma_compra":"A pessoa informada não está salva no banco de dados.\nVerifique a lista de pessoas em 'Área Criação'"})
+    print("\n\nAcessa banco")
     # encontrando id do banco
     sql_id_banco = "SELECT id_banco FROM banco WHERE nome = %s"
     cursor.execute(sql_id_banco, (banco,))
-    id_banco = cursor.fetchone()[0]
-    #print("nome banco: ", banco)
-    #print("id banco: ", id_banco)
-
+    id_banco = cursor.fetchone()
+    if id_banco is None:
+        return jsonify({"erro":"O banco informado não está salvo no banco de dados.\nVerifique a lista de bancos em 'Área Criação'"})
+    print("\n\nAcessa loja")
     # encontrando id da loja
     sql_id_loja = "SELECT id_lojasite FROM lojasite WHERE nome = %s"
     cursor.execute(sql_id_loja, (loja,))
-    id_loja = cursor.fetchone()[0]
-    #print("nome loja: ", loja)
-    #print("id loja: ", id_loja)
-
+    id_loja = cursor.fetchone()
+    if id_loja is None:
+        return jsonify({"erro":"A loja/site informada não está salva no banco de dados.\nVerifique a lista de loja/site em 'Área Criação'"})
+    print("\n\n insere no banco")
     sql_salvar = "INSERT INTO compra " \
     "(id_pessoa, id_banco, id_lojasite, data_compra, valor_total, qtd_parcela) VALUES" \
     "(%s, %s, %s, %s, %s, %s)"
-    cursor.execute(sql_salvar, (id_pessoa, id_banco, id_loja, data, valor_total, qtd_parcela))
-    #print("valores salvos")
+    cursor.execute(sql_salvar, (id_pessoa[0], id_banco[0], id_loja[0], data, valor_total, qtd_parcela))
+    print("Inserido")
 
     # gerando parcelas:
     id_compra = cursor.lastrowid
@@ -89,13 +92,13 @@ def salvar_compra():
         qtd_parcela,
         valor_total
     )    
-
+    print("adicionou em parclea")
     conexao.commit()
 
     cursor.close()
     conexao.close()
 
-    return jsonify(success=True, message="Compra adicionada!"), 200
+    return jsonify({"sucesso":"Compra adicionada!"}), 200
 
 @compra_bp.route("/compra/excluir", methods=["DELETE"])
 def exclui_compra():
@@ -109,7 +112,7 @@ def exclui_compra():
     cursor.execute("DELETE FROM compra WHERE id_compra = %s", (codigo,))
     conexao.commit()
 
-    return jsonify({"success":"elemento excluido"}), 200
+    return jsonify({"success":"Compra excluida com sucesso"}), 200
 
 @compra_bp.route("/compra/verifica_input/<tipo>")
 def buscar(tipo):
@@ -138,29 +141,31 @@ def buscar(tipo):
     
 @compra_bp.route("/compra/reembolso", methods=["POST"])
 def salvar_reembolso():
+    # *duvida: e se a pessoa fizer varios pedidos de reembolso que excedam o valor total da compra? 
+    # como evitar isso? Fazer apenas um pedido de reembolso por periodo de fatura?
+
     dados = request.get_json()
-    codigo_compra = dados.get("codigo")
+    id_compra = dados.get("id_compra")
     valor_reembolso = dados.get("valor")
-    data_reembolso = dados.get("data")
+    data_reembolso = dados.get("data")  
 
     conexao = conecta_banco()
     cursor = conexao.cursor()
 
     sql = "INSERT INTO reembolso (id_compra, valor_reembolso, data_reembolso) " \
     "VALUES (%s, %s, %s)"
-    
-    cursor.execute(sql, (codigo_compra, valor_reembolso, data_reembolso))
+    cursor.execute(sql, (id_compra, valor_reembolso, data_reembolso))
     conexao.commit()
     
     cursor.close()
     conexao.close()
-
 
     return jsonify({"sucesso":"reembolso registrado!"}), 201
 
 @compra_bp.route("/compra/edicao", methods=["PUT"])
 def editar_compra():
     dados = request.get_json()
+    codigo = dados.get("valor_codigo")
     id_compra = dados.get("id")
     data = dados.get("data")
     nome = dados.get("nome")
@@ -169,21 +174,29 @@ def editar_compra():
     valor_total = dados.get("valor_total")
     qtd_parcela = dados.get("qtd_parcela")
 
+    print("\n\n\n\n", codigo)
+
     conexao = conecta_banco()
     cursor = conexao.cursor(buffered=True)
 
     cursor.execute("SELECT id_pessoa FROM pessoa WHERE nome = %s", (nome,))
-    id_pessoa = cursor.fetchone()[0]
-    print(id_pessoa)
+    id_pessoa = cursor.fetchone()
+    if id_pessoa is None:
+        return jsonify({"erro":"A pessoa informada não está salva no banco de dados.\nVerifique a lista de pessoas em 'Área Criação'"})
+
 
     cursor.execute("SELECT id_banco FROM banco WHERE nome = %s", (banco,))
-    id_banco = cursor.fetchone()[0]
+    id_banco = cursor.fetchone()
+    if id_banco is None:
+        return jsonify({"erro":"O banco informado não está salvo no banco de dados.\nVerifique a lista de bancos em 'Área Criação'"})
 
     cursor.execute("SELECT id_lojasite FROM lojasite WHERE nome = %s", (loja,))
-    id_loja = cursor.fetchone()[0]
+    id_loja = cursor.fetchone()
+    if id_loja is None:
+        return jsonify({"erro":"A loja/site informada não está salva no banco de dados.\nVerifique a lista de loja/site em 'Área Criação'"})
 
     print("ID:", id_compra)
-    print("Pessoa:", id_pessoa)
+    print("Pessoa:", id_pessoa[0])
     print("Banco:", id_banco)
     print("Loja:", id_loja)
     print("Data:", data)
@@ -193,7 +206,7 @@ def editar_compra():
     edicao = "UPDATE compra SET id_pessoa = %s, id_banco = %s, id_lojasite = %s, " \
     "data_compra = %s, valor_total = %s, qtd_parcela = %s WHERE id_compra = %s"
 
-    cursor.execute(edicao, (id_pessoa, id_banco, id_loja, data, valor_total, qtd_parcela, id_compra))
+    cursor.execute(edicao, (id_pessoa[0], id_banco[0], id_loja[0], data, valor_total, qtd_parcela, id_compra))
     conexao.commit()
 
     cursor.close()
@@ -203,7 +216,7 @@ def editar_compra():
 
 # adicionando parcelas a cada compra
 def gerador_parcela(cursor, id_compra, data_compra, qtd_parcela, valor_total):
-    #print("aaa")
+    print("adicionando em parcela")
     qtd_parcela = int(qtd_parcela)
     data_compra = datetime.strptime(data_compra,"%Y-%m-%d").date()
 

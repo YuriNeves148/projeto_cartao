@@ -11,6 +11,8 @@
   </head>
   <body>
     <div id="fundo">
+      <div id="mensagem_alerta" class="mensagem_alerta"></div>
+
       <div id="container_section">
         <div id="botoes_section">
           <nav>
@@ -95,7 +97,7 @@
                 </div>
                 <section>
                   <div id="linha_compra">
-                    <ul id="lista_historico"></ul>
+                    <ul id="lista_historico_home"></ul>
                   </div>
                 </section>
               </div>
@@ -297,7 +299,7 @@
     <!-- área home -->
     <script>
       window.addEventListener("DOMContentLoaded", () => {
-        lista_historico_home("lista_historico");
+        lista_historico_home("lista_historico_home");
         historico_compra("hist_lista_cont");
         // criacao
         lista_loja_func("lista_loja_cont");

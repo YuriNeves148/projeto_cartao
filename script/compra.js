@@ -57,7 +57,9 @@ export async function historico_compra() {
 
   dado.forEach((item) => {
     const dataa = new Date(item.data_compra);
-    const dataFormato = dataa.toLocaleDateString("pt-BR");
+    //console.log("dataa: ", dataa);
+    const dataFormato = dataa.toISOString().split("T")[0];
+    //console.log("ver data aceita no sql: ", dataFormato);
     const valor_parcela = `${parseFloat(item.valor_parcela).toFixed(2)}`;
     const novo_item = document.createElement("li");
     novo_item.innerHTML = `
@@ -88,7 +90,8 @@ export async function historico_compra() {
       lojaEditandoCompra = item.onde;
       valor_totalEditandoCompra = item.valor_total;
       qtd_parcelaEditandoCompra = item.qtd_parcela;
-      console.log("id da compra selecionada: ", idEditandoCompra);
+      //console.log("id da compra selecionada: ", idEditandoCompra);
+      //console.log("data da compra selecionada (editando): ",dataEditandoCompra,);
       // a cada final de chamada os valores recebem null (como na declaracao inicial)
     });
     lista_compra_cont.appendChild(novo_item);
@@ -96,6 +99,7 @@ export async function historico_compra() {
 }
 
 btn_salvar_compra.addEventListener("click", async () => {
+  const valor_codigo = codigo.value.trim();
   const valor_data = data.value.trim();
   const valor_nome = nome.value.trim();
   const valor_banco = banco.value.trim();
@@ -110,7 +114,8 @@ btn_salvar_compra.addEventListener("click", async () => {
     valor_valor_total === "" ||
     valor_qtd_parcela === ""
   ) {
-    alert("Preencha todos os campos para salvar");
+    mostraAlerta("aviso", "Preencha todos os campos para salvar a compra.");
+
     return;
   }
 
@@ -119,6 +124,7 @@ btn_salvar_compra.addEventListener("click", async () => {
       method: ["POST"],
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        valor_codigo: valor_codigo,
         data_comp: valor_data,
         nome_comp: valor_nome,
         banco_comp: valor_banco,
@@ -129,17 +135,24 @@ btn_salvar_compra.addEventListener("click", async () => {
     });
 
     if (!resposta.ok) {
-      alert("Nao foi possível salvar a compra.");
+      mostraAlerta("aviso", "Preencha todos os campos para salvar a compra.");
       return;
     }
+    const dado = await resposta.json();
+    //console.log(dado);
+    if (dado.cliclou) {
+      console.log(dado);
+      mostraAlerta("aviso", dado.cliclou);
+      return;
+    }
+    codigo.value = "";
     data.value = "";
     nome.value = "";
     banco.value = "";
     loja.value = "";
     valor_total.value = "";
     qtd_parcela.value = "";
-    const dado = await resposta.json();
-    console.log(dado);
+    mostraAlerta("sucesso", dado.sucesso);
   } catch (erro) {
     alert("Nao foi possivel se conectar a API");
   }
@@ -153,7 +166,7 @@ btn_excluir_compra.addEventListener("click", async () => {
   const valor_loja = loja.value.trim();
   const valor_valor_total = valor_total.value.trim();
   const valor_qtd_parcela = qtd_parcela.value.trim();
-  console.log(`valor: ${valor_codigo}`);
+  //console.log(`valor: ${valor_codigo}`);
   if (
     valor_codigo === "" ||
     valor_data === "" ||
@@ -163,7 +176,7 @@ btn_excluir_compra.addEventListener("click", async () => {
     valor_valor_total === "" ||
     valor_qtd_parcela === ""
   ) {
-    alert("Preencha todos os campos para salvar a compra.");
+    mostraAlerta("aviso", "Clique em uma compra para excluir.");
     return;
   }
 
@@ -173,17 +186,11 @@ btn_excluir_compra.addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         condigo_comp: valor_codigo,
-        data_comp: valor_data,
-        nome_comp: valor_nome,
-        banco_comp: valor_banco,
-        loja_comp: valor_loja,
-        valor_total_comp: valor_valor_total,
-        qtd_parcela_comp: valor_qtd_parcela,
       }),
     });
 
     if (!resposta.ok) {
-      alert("Nao foi possível salvar a compra.");
+      mostraAlerta("aviso", "Erro ao excluir compra.");
       return;
     }
     codigo.value = "";
@@ -193,9 +200,11 @@ btn_excluir_compra.addEventListener("click", async () => {
     loja.value = "";
     valor_total.value = "";
     qtd_parcela.value = "";
-    alert("compra excluida com sucesso");
     const dado = await resposta.json();
     console.log(dado);
+    mostraAlerta("sucesso", dado.success);
+
+    //location.reload();
   } catch (erro) {
     console.error(erro);
     alert("Nao foi possivel se conectar a API");
@@ -270,7 +279,7 @@ document.addEventListener("click", (evento) => {
 
 btn_reembolso.addEventListener("click", () => {
   if (idEditandoCompra === null) {
-    alert("Selecione uma compra para pedir reembolso");
+    mostraAlerta("aviso", "Selecione uma compra para pedir reembolso.");
     return;
   }
   janela_reembolso.style.display = "block";
@@ -290,20 +299,29 @@ btn_cancelar_reembolso.addEventListener("click", () => {
   qtd_parcela.value = "";
 });
 
+// *nao tenho certeza se está tudo certo
 btn_salvar_reembolso.addEventListener("click", async () => {
   const codigo_comp = idEditandoCompra;
   const valor_r = valor_reembolso.value.trim();
   const data_r = data_reembolso.value.trim();
+  const valor_compra = valor_total.value.trim();
 
   if (valor_r === "" || data_r === "") {
-    alert("preencha todos os campos para salvar o reembolso");
+    mostraAlerta("aviso", "Preencha todos os campos do reembolso.");
     return;
   }
+  if (valor_r > valor_compra) {
+    mostraAlerta("erro", "Valor do reembolso maior do que o valor da compra.");
+    valor_reembolso.value = "";
+    return;
+  }
+
   try {
     const resposta = await fetch(`${api_url}/compra/reembolso`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        valor_total: valor_compra,
         codigo: codigo_comp,
         valor: valor_r,
         data: data_r,
@@ -311,11 +329,14 @@ btn_salvar_reembolso.addEventListener("click", async () => {
     });
     const dado = await resposta.json();
     if (!resposta.ok) {
-      alert("Não foi possível se conectar a API (salvar reembolso)");
+      mostraAlerta(
+        "aviso",
+        "Não foi possível se conectar a API (salvar reembolso)",
+      );
       return;
     }
     //console.log(dado);
-    alert("Reembolso salvo com sucesso.\n");
+    mostraAlerta("sucesso", "Reembolso salvo com sucesso.\n");
     janela_reembolso.style.display = "none";
     valor_reembolso.value = "";
     data_reembolso.value = "";
@@ -341,17 +362,20 @@ btn_edita_compra.addEventListener("click", async () => {
     alert("Preencha todos os campos para salvar a edição.");
     return;
   }
-  console.log(dataEditandoCompra);
-  const data_recebida = new Date(dataEditandoCompra);
-  const data_formatada = data_recebida.toISOString().split("T")[0];
-
+  //const data_recebida = new Date(dataEditandoCompra);
+  //console.log("data recebida: ", data_recebida);
+  //const data_formatada = data_recebida.toISOString().split("T")[0];
+  //console.log(data_formatada);
+  //console.log("data escolhida para ser a atual: ", data.value);
+  const formato_us = data.value.split("/").reverse().join("/");
+  //console.log("data formatada: ", formato_us);
   try {
     const resposta = await fetch(`${api_url}/compra/edicao`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: idEditandoCompra,
-        data: data_formatada,
+        data: formato_us,
         nome: nome.value,
         banco: banco.value,
         loja: loja.value,
@@ -365,6 +389,11 @@ btn_edita_compra.addEventListener("click", async () => {
     }
     const dado = await resposta.json();
     console.log(dado);
+    if (dado.erro) {
+      alert(dado.erro);
+      return;
+    }
+    // e se recebessem uma classe para serem limpados de forma mais facil?
     codigo.value === "";
     data.value === "";
     nome.value === "";
@@ -378,3 +407,14 @@ btn_edita_compra.addEventListener("click", async () => {
     console.error(erro);
   }
 });
+
+export function mostraAlerta(tipo = "sucesso", mensagem) {
+  const alerta = document.getElementById("mensagem_alerta");
+
+  alerta.textContent = mensagem;
+  alerta.className = `mensagem_alerta ${tipo} mostrar`;
+
+  setTimeout(() => {
+    alerta.className = "mensagem_alerta";
+  }, 4000);
+}

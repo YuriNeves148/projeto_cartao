@@ -13,7 +13,7 @@ mesSelecionado.value = data;
 // mes atual como valor inicial do select
 mesSelecionado.value = new Date().getMonth();
 
-const listaa_historico = document.getElementById("lista_historico");
+const listaa_historico = document.getElementById("lista_historico_home");
 const valor_fatura_nubank = document.getElementById("valor_nubank");
 const valor_fatura_c6 = document.getElementById("valor_c6");
 
