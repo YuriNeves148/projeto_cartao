@@ -105,15 +105,16 @@ export async function reembolso(mes) {
   const dado = await resposta.json();
   const reembolso_nubank = dado.nubank;
   const reembolso_c6 = dado.c6;
-
+  /*
   console.log(
     `Reembolso Nubank (mes: ${parseInt(mesSelecionado.value) + 1})`,
-    reembolso_nubank,
+    reembolso_nubank[0].valor_reembolso,
   );
   console.log(
     `Reembolso C6 (mes: ${parseInt(mesSelecionado.value) + 1})`,
     reembolso_c6,
   );
+  */
 
   reembolso_fatura_nubank.innerHTML = "";
   reembolso_fatura_c6.innerHTML = "";

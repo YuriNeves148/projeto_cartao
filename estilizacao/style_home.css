@@ -208,11 +208,16 @@ body {
   font-weight: bold;
   font-size: 16px;
 }
-
+#linha_compra li {
+  display: grid;
+  grid-template-columns: 100px 120px 180px 150px 170px 125px 190px;
+  text-align: center;
+}
 /* linha genérica de item de compra, caso você monte cada item como
    uma div/row dentro de <section> */
 .conteudo_historico #linha_compra {
   display: grid;
+  grid-template-columns: auto;
   gap: 10px;
   padding: 10px 6px;
   border-bottom: 1px solid #e0e0e0;
