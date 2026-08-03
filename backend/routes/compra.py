@@ -145,7 +145,7 @@ def salvar_reembolso():
     # como evitar isso? Fazer apenas um pedido de reembolso por periodo de fatura?
 
     dados = request.get_json()
-    id_compra = dados.get("id_compra")
+    id_compra = dados.get("codigo")
     valor_reembolso = dados.get("valor")
     data_reembolso = dados.get("data")  
 

@@ -93,6 +93,7 @@ export async function fatura(mes) {
 fatura();
 
 export async function reembolso(mes) {
+  //console.log("mes selecionado: ", mesSelecionado.value);
   const resposta = await fetch(
     `${api_url}/individual/reembolso?mes=${mesSelecionado.value}`,
   );
@@ -102,8 +103,8 @@ export async function reembolso(mes) {
     return;
   }
   const dado = await resposta.json();
-  const reembolso_nubank = dado[0];
-  const reembolso_c6 = dado[1];
+  const reembolso_nubank = dado.nubank;
+  const reembolso_c6 = dado.c6;
 
   console.log(
     `Reembolso Nubank (mes: ${parseInt(mesSelecionado.value) + 1})`,
@@ -146,7 +147,6 @@ export async function reembolso(mes) {
     `;
     reembolso_fatura_c6.appendChild(li);
   });
-
   mesSelecionado.addEventListener("change", () => {
     reembolso(mesSelecionado.value);
   });

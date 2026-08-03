@@ -28,8 +28,21 @@ def lista_ind_nubank():
 
     data_fim = date(ano, mes_sql, 17)
 
-    sql_nu = "SELECT pessoa.nome AS nome_pessoa, SUM(compra.valor_total / compra.qtd_parcela) AS valor_parcela FROM compra JOIN pessoa ON compra.id_pessoa = pessoa.id_pessoa JOIN parcela ON compra.id_compra = parcela.id_compra JOIN banco ON compra.id_banco = banco.id_banco WHERE banco.nome = 'Nubank' AND parcela.data_vencimento = %s GROUP BY pessoa.id_pessoa, pessoa.nome;"
-    sql_c6 = "SELECT pessoa.nome AS nome_pessoa, SUM(compra.valor_total / compra.qtd_parcela) AS valor_parcela FROM compra JOIN pessoa ON compra.id_pessoa = pessoa.id_pessoa JOIN parcela ON compra.id_compra = parcela.id_compra JOIN banco ON compra.id_banco = banco.id_banco WHERE banco.nome = 'C6' AND parcela.data_vencimento = %s GROUP BY pessoa.id_pessoa, pessoa.nome;"
+    sql_nu = "SELECT pessoa.nome AS nome_pessoa, " \
+    "SUM(compra.valor_total / compra.qtd_parcela) AS valor_parcela " \
+    "FROM compra JOIN pessoa ON compra.id_pessoa = pessoa.id_pessoa " \
+    "JOIN parcela ON compra.id_compra = parcela.id_compra " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE banco.nome = 'Nubank' AND parcela.data_vencimento = %s " \
+    "GROUP BY pessoa.id_pessoa, pessoa.nome;"
+    
+    sql_c6 = "SELECT pessoa.nome AS nome_pessoa, " \
+    "SUM(compra.valor_total / compra.qtd_parcela) AS valor_parcela " \
+    "FROM compra JOIN pessoa ON compra.id_pessoa = pessoa.id_pessoa " \
+    "JOIN parcela ON compra.id_compra = parcela.id_compra " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE banco.nome = 'C6' AND parcela.data_vencimento = %s " \
+    "GROUP BY pessoa.id_pessoa, pessoa.nome;"
 
     cursor.execute(sql_nu, (data_fim,))
     dado_nubank = cursor.fetchall()
@@ -91,41 +104,121 @@ def reembolso():
     
     mes = request.args.get("mes")
     mes = int(mes) +1
-    
+    #print("\n\nmes da fatura: ", mes)
     ano = request.args.get("ano", date.today().year)
     ano = int(ano)
 
     data_inicio = date(ano, mes, 10)
-    data_final = date(ano, mes+1, 9)
+    if mes == 12:
+        data_final = date(ano + 1, 1, 9)
+    else:
+        data_final = date(ano, mes + 1, 9) 
+    data_vencimento = date(ano, mes, 17)   
     #print("\n\n\n")
     #print(data_inicio, data_final)
 
-    sql_nu = "select compra.id_compra as codigo_compra, pessoa.nome as nome, " \
-    "reembolso.data_reembolso as data_reembolso, reembolso.valor_reembolso as valor_reembolso " \
-    "from compra " \
-    "join reembolso on compra.id_compra = reembolso.id_compra " \
-    "join banco on compra.id_banco = banco.id_banco " \
-    "join pessoa on compra.id_pessoa = pessoa.id_pessoa " \
-    "where reembolso.data_reembolso between %s and %s and banco.nome = 'Nubank';"
-    cursor.execute(sql_nu, (data_inicio, data_final))
-    encontra_reembolso_nu = cursor.fetchall()
-    print("reembolso da nubank: ", encontra_reembolso_nu)
-    
-    sql_c6 = "select compra.id_compra as codigo_compra, pessoa.nome as nome, " \
-    "reembolso.data_reembolso as data_reembolso, reembolso.valor_reembolso as valor_reembolso " \
-    "from compra " \
-    "join reembolso on compra.id_compra = reembolso.id_compra " \
-    "join banco on compra.id_banco = banco.id_banco " \
-    "join pessoa on compra.id_pessoa = pessoa.id_pessoa " \
-    "where reembolso.data_reembolso between %s and %s and banco.nome = 'C6';"
-    cursor.execute(sql_c6, (data_inicio, data_final))
-    encontra_reembolso_c6 = cursor.fetchall()
-    print("\n\nreembolso da C6: ", encontra_reembolso_c6)
-    
+    """
+    sql_c6 = "SELECT " \
+    "COALESCE(( SELECT SUM(parcela.valor_parcela) " \
+    "FROM parcela " \
+    "JOIN compra ON parcela.id_compra = compra.id_compra " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE parcela.data_vencimento " \
+    "BETWEEN %s AND %s AND banco.nome = 'C6' ), 0) " \
+    "AS total_fatura, " \
+    "" \
+    "COALESCE(( SELECT SUM(reembolso.valor_reembolso) " \
+    "FROM reembolso " \
+    "JOIN compra ON reembolso.id_compra = compra.id_compra " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE reembolso.data_reembolso " \
+    "BETWEEN %s AND %s AND banco.nome = 'C6' ), 0) " \
+    "AS total_reembolso, " \
+    "" \
+    "COALESCE(( SELECT SUM(parcela.valor_parcela) " \
+    "FROM parcela " \
+    "JOIN compra ON parcela.id_compra = compra.id_compra " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE parcela.data_vencimento " \
+    "BETWEEN %s AND %s AND banco.nome = 'C6' ), 0) - " \
+    "" \
+    "COALESCE(( SELECT SUM(reembolso.valor_reembolso) " \
+    "FROM reembolso JOIN compra ON reembolso.id_compra = compra.id_compra " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE reembolso.data_reembolso BETWEEN %s AND %s AND banco.nome = 'C6' ), 0) " \
+    "AS valor_final;"
+    cursor.execute(sql_c6, (data_inicio, data_final, data_inicio, data_final, data_inicio, data_final, data_inicio, data_final))
+    resposta_c6 = cursor.fetchall()
+    print("\n\n retorno fatura C6: ", resposta_c6[0])
+    sql_nubank = "SELECT " \
+    "COALESCE(( SELECT SUM(parcela.valor_parcela) " \
+    "FROM parcela " \
+    "JOIN compra ON parcela.id_compra = compra.id_compra " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE parcela.data_vencimento " \
+    "BETWEEN %s AND %s AND banco.nome = 'Nubank' ), 0) " \
+    "AS total_fatura, " \
+    "" \
+    "COALESCE(( SELECT SUM(reembolso.valor_reembolso) " \
+    "FROM reembolso " \
+    "JOIN compra ON reembolso.id_compra = compra.id_compra " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE reembolso.data_reembolso " \
+    "BETWEEN %s AND %s AND banco.nome = 'Nubank' ), 0) " \
+    "AS total_reembolso, " \
+    "" \
+    "COALESCE(( SELECT SUM(parcela.valor_parcela) " \
+    "FROM parcela " \
+    "JOIN compra ON parcela.id_compra = compra.id_compra " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE parcela.data_vencimento " \
+    "BETWEEN %s AND %s AND banco.nome = 'Nubank' ), 0) - " \
+    "" \
+    "COALESCE(( SELECT SUM(reembolso.valor_reembolso) " \
+    "FROM reembolso JOIN compra ON reembolso.id_compra = compra.id_compra " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE reembolso.data_reembolso BETWEEN %s AND %s AND banco.nome = 'Nubank' ), 0) " \
+    "AS valor_final;"
+    cursor.execute(sql_nubank, (data_inicio, data_final, data_inicio, data_final, data_inicio, data_final, data_inicio, data_final))
+    resposta_nubank = cursor.fetchall()
+    print("\n\n retorno fatura Nubank: ", resposta_nubank[0])
+    """
+
+    lista_nubank = "SELECT " \
+    "compra.id_compra AS codigo_compra, " \
+    "reembolso.data_reembolso, " \
+    "pessoa.nome AS nome, " \
+    "reembolso.valor_reembolso " \
+    "FROM reembolso " \
+    "JOIN compra ON reembolso.id_compra = compra.id_compra " \
+    "JOIN pessoa ON compra.id_pessoa = pessoa.id_pessoa " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE reembolso.data_reembolso BETWEEN %s AND %s " \
+    "AND banco.nome = 'Nubank';"
+    cursor.execute(lista_nubank, (data_inicio, data_final))
+    retorno_nubank = cursor.fetchall()
+    print("\n\n retorno nubank: ", retorno_nubank)
+
+    lista_c6 = "SELECT " \
+    "compra.id_compra AS codigo_compra, " \
+    "reembolso.data_reembolso, " \
+    "pessoa.nome AS nome, " \
+    "reembolso.valor_reembolso " \
+    "FROM reembolso " \
+    "JOIN compra ON reembolso.id_compra = compra.id_compra " \
+    "JOIN pessoa ON compra.id_pessoa = pessoa.id_pessoa " \
+    "JOIN banco ON compra.id_banco = banco.id_banco " \
+    "WHERE reembolso.data_reembolso BETWEEN %s AND %s " \
+    "AND banco.nome = 'C6';"
+    cursor.execute(lista_c6, (data_inicio, data_final))
+    retorno_c6 = cursor.fetchall()
+    print("\n\n retorno c6: ", retorno_c6)
+
     cursor.close()
     conexao.close()
 
-    return jsonify(encontra_reembolso_nu, encontra_reembolso_c6)
+    return jsonify({"nubank":retorno_nubank, "c6": retorno_c6})
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

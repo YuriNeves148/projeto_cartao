@@ -310,7 +310,9 @@ btn_salvar_reembolso.addEventListener("click", async () => {
     mostraAlerta("aviso", "Preencha todos os campos do reembolso.");
     return;
   }
-  if (valor_r > valor_compra) {
+  console.log("valor_total: ", valor_compra);
+  console.log("valor_r: ", valor_r);
+  if (valor_r <= valor_compra) {
     mostraAlerta("erro", "Valor do reembolso maior do que o valor da compra.");
     valor_reembolso.value = "";
     return;
