@@ -74,13 +74,30 @@
 .fundo_fat_individual {
   display: flex;
   flex-direction: column;
+  margin: 0 auto;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  border: 2px solid black;
+  border-radius: 14px;
 }
 
-#fatura_total_nu,
-#fatura_total_c6 {
-  font-size: 22px;
-  margin: 0;
+.tabela_resumo_fatura {
+  width: 80%;
+  margin: 8px auto 0;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 16px;
+}
+
+.tabela_resumo_fatura th,
+.tabela_resumo_fatura td {
+  padding: 7px;
+}
+
+.tabela_resumo_fatura td:last-child {
+  color: #1a8a32;
 }
 
 .area_reembolso {

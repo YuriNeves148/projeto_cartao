@@ -76,7 +76,14 @@ def fatura():
         data_inicio = date(ano, mes - 1, 10)
     data_vencimento = date(ano, mes, 17)
 
-    sql_nu = "SELECT COALESCE(SUM(compra.valor_total/compra.qtd_parcela), 0) - " \
+    sql_nu = "SELECT COALESCE(SUM(compra.valor_total/compra.qtd_parcela), 0) AS total_compras, " \
+    "COALESCE((SELECT SUM(reembolso.valor_reembolso) " \
+    "FROM reembolso " \
+    "JOIN compra AS compra_reembolso ON reembolso.id_compra = compra_reembolso.id_compra " \
+    "JOIN banco AS banco_reembolso ON compra_reembolso.id_banco = banco_reembolso.id_banco " \
+    "WHERE reembolso.data_reembolso BETWEEN %s AND %s " \
+    "AND banco_reembolso.nome = 'Nubank'), 0) AS total_reembolso, " \
+    "COALESCE(SUM(compra.valor_total/compra.qtd_parcela), 0) - " \
     "COALESCE((SELECT SUM(reembolso.valor_reembolso) " \
     "FROM reembolso " \
     "JOIN compra AS compra_reembolso ON reembolso.id_compra = compra_reembolso.id_compra " \
@@ -88,10 +95,17 @@ def fatura():
     "join banco on compra.id_banco = banco.id_banco " \
     "where parcela.data_vencimento = %s " \
     "and banco.nome = 'Nubank';"
-    cursor.execute(sql_nu, (data_inicio, data_final, data_vencimento))
+    cursor.execute(sql_nu, (data_inicio, data_final, data_inicio, data_final, data_vencimento))
     dados_nu = cursor.fetchall()
 
-    sql_c6 = "SELECT COALESCE(SUM(compra.valor_total/compra.qtd_parcela), 0) - " \
+    sql_c6 = "SELECT COALESCE(SUM(compra.valor_total/compra.qtd_parcela), 0) AS total_compras, " \
+    "COALESCE((SELECT SUM(reembolso.valor_reembolso) " \
+    "FROM reembolso " \
+    "JOIN compra AS compra_reembolso ON reembolso.id_compra = compra_reembolso.id_compra " \
+    "JOIN banco AS banco_reembolso ON compra_reembolso.id_banco = banco_reembolso.id_banco " \
+    "WHERE reembolso.data_reembolso BETWEEN %s AND %s " \
+    "AND banco_reembolso.nome = 'C6'), 0) AS total_reembolso, " \
+    "COALESCE(SUM(compra.valor_total/compra.qtd_parcela), 0) - " \
     "COALESCE((SELECT SUM(reembolso.valor_reembolso) " \
     "FROM reembolso " \
     "JOIN compra AS compra_reembolso ON reembolso.id_compra = compra_reembolso.id_compra " \
@@ -103,7 +117,7 @@ def fatura():
     "join banco on compra.id_banco = banco.id_banco " \
     "where parcela.data_vencimento = %s " \
     "and banco.nome = 'C6';"
-    cursor.execute(sql_c6, (data_inicio, data_final, data_vencimento))
+    cursor.execute(sql_c6, (data_inicio, data_final, data_inicio, data_final, data_vencimento))
     dados_c6 = cursor.fetchall()
 
     #print("fatura nu: ", dados_nu)

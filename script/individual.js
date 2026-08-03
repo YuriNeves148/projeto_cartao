@@ -11,6 +11,12 @@ const reembolso_fatura_nubank = document.getElementById(
   "reembolso_fatura_nubank",
 );
 const reembolso_fatura_c6 = document.getElementById("reembolso_fatura_c6");
+const area_reembolso_nubank = document.querySelector(
+  "#fundo_info_nubank .area_reembolso",
+);
+const area_reembolso_c6 = document.querySelector(
+  "#fundo_info_c6 .area_reembolso",
+);
 
 const data = new Date().getMonth();
 mesSelecionado.value = data;
@@ -71,21 +77,24 @@ export async function fatura(mes) {
   fatura_total_nu.innerHTML = "";
   fatura_total_c6.innerHTML = "";
   const dado = await resposta.json();
-  let fat_nu = parseFloat(dado.nubank[0].valor_fatura_nubank).toFixed(2);
-  let fat_c6 = parseFloat(dado.c6[0].valor_fatura_c6).toFixed(2);
+  const formataValor = (valor) => `R$ ${Number(valor || 0).toFixed(2)}`;
+  const resumoNubank = dado.nubank[0];
+  const resumoC6 = dado.c6[0];
 
-  //console.log("nubank: ", fat_nu);
-  //console.log("c6: ", fat_c6);
-
-  if (fat_c6 === "NaN") {
-    fat_c6 = 0.0;
-  }
-  if (fat_nu === "NaN") {
-    fat_nu = 0.0;
-  }
-
-  fatura_total_nu.innerHTML = `total: <strong>R$ ${fat_nu}</strong>`;
-  fatura_total_c6.innerHTML = `total: <strong>R$ ${fat_c6}</strong>`;
+  fatura_total_nu.innerHTML = `
+    <tr>
+      <td>${formataValor(resumoNubank.total_compras)}</td>
+      <td>${formataValor(resumoNubank.total_reembolso)}</td>
+      <td><strong>${formataValor(resumoNubank.valor_fatura_nubank)}</strong></td>
+    </tr>
+  `;
+  fatura_total_c6.innerHTML = `
+    <tr>
+      <td>${formataValor(resumoC6.total_compras)}</td>
+      <td>${formataValor(resumoC6.total_reembolso)}</td>
+      <td><strong>${formataValor(resumoC6.valor_fatura_c6)}</strong></td>
+    </tr>
+  `;
   mesSelecionado.addEventListener("change", () => {
     fatura(mesSelecionado.value);
   });
@@ -105,6 +114,8 @@ export async function reembolso(mes) {
   const dado = await resposta.json();
   const reembolso_nubank = dado.nubank;
   const reembolso_c6 = dado.c6;
+  area_reembolso_nubank.hidden = reembolso_nubank.length === 0;
+  area_reembolso_c6.hidden = reembolso_c6.length === 0;
   /*
   console.log(
     `Reembolso Nubank (mes: ${parseInt(mesSelecionado.value) + 1})`,

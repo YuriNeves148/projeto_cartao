@@ -201,7 +201,7 @@
                 <div id="fundo_gasto_pessoa_nubank">
                   <ul id="lista_gasto_nubank"></ul>
                 </div>
-                <section class="area_reembolso">
+                <section class="area_reembolso" hidden>
                   <h2>reembolso</h2>
                   <div class="legenda_reembolso">
                     <span>código da compra</span>
@@ -214,7 +214,16 @@
                   </div>
                 </section>
                 <div class="fundo_fat_individual">
-                  <ul id="fatura_total_nu"></ul>
+                  <table class="tabela_resumo_fatura">
+                    <thead>
+                      <tr>
+                        <th>Compras</th>
+                        <th>Reembolsos</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody id="fatura_total_nu"></tbody>
+                  </table>
                 </div>
               </div>
 
@@ -227,7 +236,7 @@
                 <div id="fundo_gasto_pessoa_c6">
                   <ul id="lista_gasto_c6"></ul>
                 </div>
-                <section class="area_reembolso">
+                <section class="area_reembolso" hidden>
                   <h2>reembolso</h2>
                   <div class="legenda_reembolso">
                     <span>código</span>
@@ -240,7 +249,16 @@
                   </div>
                 </section>
                 <div class="fundo_fat_individual">
-                  <ul id="fatura_total_c6"></ul>
+                  <table class="tabela_resumo_fatura">
+                    <thead>
+                      <tr>
+                        <th>Compras</th>
+                        <th>Reembolsos</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody id="fatura_total_c6"></tbody>
+                  </table>
                 </div>
               </div>
             </div>
