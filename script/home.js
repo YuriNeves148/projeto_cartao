@@ -43,6 +43,7 @@ export async function lista_historico_home(mes) {
     <span class="onde">${item.lojasite}</span>
     <span class="valor">${parseFloat(item.valor_total).toFixed(2)}</span>
     <span class="valor">${item.qtd_parcela}</span>
+    <span class="valor">${item.numero_parcela}</span>
     <span class="valor">${parseFloat(item.valor_parcela).toFixed(2)}</span>
 `;
     listaa_historico.appendChild(novo_item);

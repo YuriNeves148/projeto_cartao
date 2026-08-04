@@ -349,7 +349,7 @@ btn_salvar_reembolso.addEventListener("click", async () => {
 
 btn_edita_compra.addEventListener("click", async () => {
   if (codigo.value === "") {
-    alert("Selecione um item para editar.");
+    mostraAlerta("aviso", "Selecione um item para editar.");
     return;
   }
 
@@ -361,7 +361,7 @@ btn_edita_compra.addEventListener("click", async () => {
     loja.value === "" ||
     qtd_parcela.value === ""
   ) {
-    alert("Preencha todos os campos para salvar a edição.");
+    mostraAlerta("aviso", "Preencha todos os campos para salvar a edição.");
     return;
   }
   //const data_recebida = new Date(dataEditandoCompra);
@@ -386,7 +386,10 @@ btn_edita_compra.addEventListener("click", async () => {
       }),
     });
     if (!resposta.ok) {
-      alert("Nao foi possivel se conectar a API (editar compra).");
+      mostraAlerta(
+        "erro",
+        "Nao foi possivel se conectar a API (editar compra).",
+      );
       return;
     }
     const dado = await resposta.json();
@@ -403,8 +406,8 @@ btn_edita_compra.addEventListener("click", async () => {
     loja.value === "";
     valor_total.value === "";
     qtd_parcela.value === "";
-    alert("Compra alterada!");
-    location.reload();
+    mostraAlerta("sucesso", "Compra alterada! Reinicie a página");
+    //location.reload();
   } catch (erro) {
     console.error(erro);
   }

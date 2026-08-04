@@ -11,7 +11,7 @@ def conecta_banco():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        database="proj_cartao4",
+        database="projeto_cartao",
         password="12345678"
     )
 
@@ -165,7 +165,7 @@ def salvar_reembolso():
 @compra_bp.route("/compra/edicao", methods=["PUT"])
 def editar_compra():
     dados = request.get_json()
-    codigo = dados.get("valor_codigo")
+
     id_compra = dados.get("id")
     data = dados.get("data")
     nome = dados.get("nome")
@@ -174,45 +174,98 @@ def editar_compra():
     valor_total = dados.get("valor_total")
     qtd_parcela = dados.get("qtd_parcela")
 
-    print("\n\n\n\n", codigo)
-
     conexao = conecta_banco()
     cursor = conexao.cursor(buffered=True)
 
-    cursor.execute("SELECT id_pessoa FROM pessoa WHERE nome = %s", (nome,))
-    id_pessoa = cursor.fetchone()
-    if id_pessoa is None:
-        return jsonify({"erro":"A pessoa informada não está salva no banco de dados.\nVerifique a lista de pessoas em 'Área Criação'"})
+    try:
+        # procura pessoa
+        cursor.execute(
+            "SELECT id_pessoa FROM pessoa WHERE nome = %s",
+            (nome,)
+        )
+        id_pessoa = cursor.fetchone()
 
+        if id_pessoa is None:
+            return jsonify({
+                "erro": "A pessoa informada não está salva no banco de dados.\nVerifique a lista de pessoas em 'Área Criação'"
+            })
 
-    cursor.execute("SELECT id_banco FROM banco WHERE nome = %s", (banco,))
-    id_banco = cursor.fetchone()
-    if id_banco is None:
-        return jsonify({"erro":"O banco informado não está salvo no banco de dados.\nVerifique a lista de bancos em 'Área Criação'"})
+        # procura banco
+        cursor.execute(
+            "SELECT id_banco FROM banco WHERE nome = %s",
+            (banco,)
+        )
+        id_banco = cursor.fetchone()
 
-    cursor.execute("SELECT id_lojasite FROM lojasite WHERE nome = %s", (loja,))
-    id_loja = cursor.fetchone()
-    if id_loja is None:
-        return jsonify({"erro":"A loja/site informada não está salva no banco de dados.\nVerifique a lista de loja/site em 'Área Criação'"})
+        if id_banco is None:
+            return jsonify({
+                "erro": "O banco informado não está salvo no banco de dados.\nVerifique a lista de bancos em 'Área Criação'"
+            })
 
-    print("ID:", id_compra)
-    print("Pessoa:", id_pessoa[0])
-    print("Banco:", id_banco)
-    print("Loja:", id_loja)
-    print("Data:", data)
-    print("Valor:", valor_total)
-    print("Parcelas:", qtd_parcela)
+        # procura loja
+        cursor.execute(
+            "SELECT id_lojasite FROM lojasite WHERE nome = %s",
+            (loja,)
+        )
+        id_loja = cursor.fetchone()
 
-    edicao = "UPDATE compra SET id_pessoa = %s, id_banco = %s, id_lojasite = %s, " \
-    "data_compra = %s, valor_total = %s, qtd_parcela = %s WHERE id_compra = %s"
+        if id_loja is None:
+            return jsonify({
+                "erro": "A loja/site informada não está salva no banco de dados.\nVerifique a lista de loja/site em 'Área Criação'"
+            })
 
-    cursor.execute(edicao, (id_pessoa[0], id_banco[0], id_loja[0], data, valor_total, qtd_parcela, id_compra))
-    conexao.commit()
+        # atualiza compra
+        sql = """
+            UPDATE compra
+            SET
+                id_pessoa = %s,
+                id_banco = %s,
+                id_lojasite = %s,
+                data_compra = %s,
+                valor_total = %s,
+                qtd_parcela = %s
+            WHERE id_compra = %s
+        """
 
-    cursor.close()
-    conexao.close()
+        cursor.execute(sql, (
+            id_pessoa[0],
+            id_banco[0],
+            id_loja[0],
+            data,
+            valor_total,
+            qtd_parcela,
+            id_compra
+        ))
 
-    return jsonify({"a":"b"})
+        # apaga as parcelas antigas
+        cursor.execute(
+            "DELETE FROM parcela WHERE id_compra = %s",
+            (id_compra,)
+        )
+
+        # gera novamente as parcelas
+        gerador_parcela(
+            cursor,
+            id_compra,
+            data,
+            qtd_parcela,
+            valor_total
+        )
+        conexao.commit()
+
+        return jsonify({
+            "mensagem": "Compra editada com sucesso."
+        })
+
+    except Exception as erro:
+        conexao.rollback()
+        return jsonify({
+            "erro": str(erro)
+        }), 500
+
+    finally:
+        cursor.close()
+        conexao.close()
 
 # adicionando parcelas a cada compra
 def gerador_parcela(cursor, id_compra, data_compra, qtd_parcela, valor_total):

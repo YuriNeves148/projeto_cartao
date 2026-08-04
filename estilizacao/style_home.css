@@ -203,14 +203,14 @@ body {
   display: grid;
   padding-top: 15px;
   margin-bottom: 9px;
-  grid-template-columns: 100px 120px 180px 150px 170px 125px 190px;
+  grid-template-columns: 100px 120px 180px 150px 170px 125px 190px 100px;
   text-align: center;
   font-weight: bold;
   font-size: 16px;
 }
 #linha_compra li {
   display: grid;
-  grid-template-columns: 100px 120px 180px 150px 170px 125px 190px;
+  grid-template-columns: 100px 120px 180px 150px 170px 125px 190px 100px;
   text-align: center;
 }
 /* linha genérica de item de compra, caso você monte cada item como

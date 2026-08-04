@@ -11,7 +11,7 @@ def conecta_banco():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        database="proj_cartao4",
+        database="projeto_cartao",
         password="12345678"
     )
 
@@ -35,13 +35,14 @@ def lista_historico():
     #print(data_inicio)
     #print(data_fim)
     sql = "select compra.data_compra, pessoa.nome as pessoa, banco.nome as banco, compra.valor_total, " \
-    "compra.qtd_parcela, (compra.valor_total/compra.qtd_parcela) as valor_parcela, lojasite.nome as lojasite " \
+    "compra.qtd_parcela, (compra.valor_total/compra.qtd_parcela) as valor_parcela, lojasite.nome as lojasite, " \
+    "parcela.numero_parcela as numero_parcela " \
     "from compra " \
     "join parcela on compra.id_compra = parcela.id_compra " \
     "join pessoa on compra.id_pessoa = pessoa.id_pessoa " \
     "join banco on compra.id_banco = banco.id_banco " \
     "join lojasite on compra.id_lojasite = lojasite.id_lojasite " \
-    "where parcela.data_vencimento = %s;"
+    "where parcela.data_vencimento = %s order by pessoa.nome;"
     
 
     cursor.execute(sql, (data_fim,))
