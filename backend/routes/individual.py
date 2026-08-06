@@ -5,15 +5,9 @@ from flask import Blueprint
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-individual_db = Blueprint("individual", __name__)
+from database import conecta_banco
 
-def conecta_banco():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        database="proj_cartao4",
-        password="12345678"
-    )
+individual_db = Blueprint("individual", __name__)
 
 @individual_db.route("/individual/listas/")
 def lista_ind_nubank():

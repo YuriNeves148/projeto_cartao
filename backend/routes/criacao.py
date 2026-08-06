@@ -4,15 +4,11 @@ import mysql.connector
 from flask import Blueprint
 from mysql.connector.errors import IntegrityError
 
+from database import conecta_banco
+
+
 criacao_bp = Blueprint("criacao", __name__)
 
-def conecta_banco():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        database="proj_cartao4",
-        password="12345678"
-    )
 
 # área CRIAÇÃO
 @criacao_bp.route("/criacao/adicionar/pessoa", methods=["POST"])

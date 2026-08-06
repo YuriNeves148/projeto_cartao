@@ -5,15 +5,9 @@ from flask import Blueprint
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
-compra_bp = Blueprint("compra", __name__)
+from database import conecta_banco
 
-def conecta_banco():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        database="proj_cartao4",
-        password="12345678"
-    )
+compra_bp = Blueprint("compra", __name__)
 
 # área COMPRA
 @compra_bp.route("/compra/lista")
