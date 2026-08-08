@@ -83,6 +83,6 @@ O projeto tem como objetivo aplicar, na prática, conceitos de desenvolvimento d
 
 ## Status
 
-🚧 **Em desenvolvimento**
+ **Em desenvolvimento**
 
 Novas funcionalidades e melhorias estão sendo implementadas, principalmente na área de **autenticação e gerenciamento de usuários**.
