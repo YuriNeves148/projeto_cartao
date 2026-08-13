@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>login ou criar conta</title>
+    <link href="/estilizacao/style_login.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!--
+        PRECISA ALINHAR OS ELEMENTOS DE USER E SENHA DE AMBAS AS DIVs
+    -->
+
+    <div id="fundo_geral">
+      <div id="div_form_login" class="class_form">
+        <h1>ACESSE sua conta</h1>
+        <div id="fundo_user_login">
+          <form id="form_user_login">
+            <label>digite seu username</label>
+            <input type="text" placeholder="ex: meu_user" />
+          </form>
+        </div>
+        <div id="fundo_senha_login">
+          <form id="form_senha_login" class="class_senha_login">
+            <label>digite sua senha</label>
+            <input type="password" />
+          </form>
+        </div>
+        <div class="div_btn">
+          <button type="button" class="btn" id="btn_acessar">ACESSAR</button>
+        </div>
+      </div>
+      <div id="div_form_criar" class="class_form">
+        <h1>CRIE sua conta</h1>
+        <div id="fundo_criar_user">
+          <form id="form_criar_user">
+            <label>crie seu username</label>
+            <input type="text" placeholder="ex: meu_user" />
+          </form>
+        </div>
+        <div id="fundo_senha_criar">
+          <form id="form_senha_criar" class="class_senha_login">
+            <label>crie sua senha</label>
+            <input type="password" />
+          </form>
+        </div>
+        <div class="div_btn">
+          <button type="button" class="btn" id="btn_criar">CRIAR</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
