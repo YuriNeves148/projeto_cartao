@@ -1,9 +1,10 @@
 import mysql.connector
+import os
 
 def conecta_banco():
     return mysql.connector.connect(
-        host="mysql",
+        host=os.getenv("MYSQL_HOST"),
         user="root",
-        password="12345678",
-        database="proj_cartao4"
+        password=os.getenv("MYSQL_PASSWORD"),
+        database=os.getenv("MYSQL_DATABASE")
     )
