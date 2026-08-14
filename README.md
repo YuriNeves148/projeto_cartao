@@ -28,7 +28,6 @@ projeto_cartao/
 ├── script/                # Arquivos JS por página (home, criacao, individual, compra)
 ├── index.html
 ├── script.js
-├── Dockerfile.frontend
 ├── docker-compose.yml
 └── README.md
 ```
@@ -46,7 +45,7 @@ docker compose up -d --build
 Isso vai:
 
 - Construir a imagem do backend (Python/Flask)
-- Construir a imagem do frontend (Nginx servindo os arquivos estáticos)
+- A imagem do frontend utiliza nginx:alpine e monta os arquivos estáticos do projeto no container.
 - Baixar a imagem do MySQL 8.0
 - Subir os três containers conectados na mesma rede
 
@@ -78,7 +77,7 @@ Se você tiver um dump `.sql` com dados (por exemplo, na pasta `dados_banco_de_d
 
 ```bash
 for f in dados_banco_de_dados/*.sql; do
-  docker exec -i projeto_cartao_mysql mysql -uroot -p12345678 proj_cartao4 < "$f"
+  docker exec -i projeto_cartao_mysql mysql -uroot -p proj_cartao4 < "$f"
 done
 ```
 
@@ -115,12 +114,21 @@ docker compose up -d --build frontend
 | --------------------------------- | --------------------------------------------------------------------------- |
 | Ver logs do backend               | `docker logs -f projeto_cartao_backend`                                     |
 | Ver logs do MySQL                 | `docker logs -f projeto_cartao_mysql`                                       |
-| Entrar no container do MySQL      | `docker exec -it projeto_cartao_mysql mysql -uroot -p12345678 proj_cartao4` |
+| Entrar no container do MySQL      | `docker exec -it projeto_cartao_mysql mysql -uroot -p proj_cartao4` |
 | Parar tudo                        | `docker compose down`                                                       |
 | Parar tudo e apagar dados         | `docker compose down -v`                                                    |
 | Reconstruir um serviço específico | `docker compose up -d --build <nome_do_serviço>`                            |
 | Ver volumes existentes            | `docker volume ls`                                                          |
 
-## Variáveis de ambiente
+### Variáveis de ambiente
 
-Atualmente, a senha do MySQL e outras configurações estão fixas no `docker-compose.yml`. Recomenda-se migrar para um arquivo `.env` antes de qualquer deploy fora do ambiente local.
+As configurações sensíveis do banco de dados são armazenadas em um arquivo `.env`, que não deve ser enviado ao GitHub.
+
+Utilize o arquivo `.env.example` como modelo para criar seu próprio `.env`.
+
+Exemplo:
+
+MYSQL_ROOT_PASSWORD=sua_senha
+MYSQL_DATABASE=proj_cartao4
+MYSQL_PASSWORD=sua_senha
+MYSQL_HOST=mysql
