@@ -80,6 +80,7 @@ for f in dados_banco_de_dados/*.sql; do
   docker exec -i projeto_cartao_mysql mysql -uroot -p proj_cartao4 < "$f"
 done
 ```
+O comando solicitará a senha definida em MYSQL_ROOT_PASSWORD no arquivo .env.
 
 > Se der erro de foreign key, importe os arquivos em ordem manualmente, respeitando as dependências entre tabelas (ex: `pessoa` antes de `compra`).
 
@@ -102,7 +103,7 @@ docker compose down -v
 
 O backend usa um **bind mount** (`./backend:/app`), então alterações no código Python refletem automaticamente dentro do container, sem precisar rebuildar a imagem. Como o Flask roda em modo debug (`debug=True`), o servidor reinicia sozinho a cada alteração salva.
 
-O frontend, por outro lado, é **copiado** para dentro da imagem no build (Nginx). Alterações em `index.html`, `script.js`, `script/` ou `estilizacao/` exigem rebuild:
+O frontend utiliza a imagem `nginx:alpine` e os arquivos estáticos são montados diretamente no container por meio de volumes. Portanto, alterações em `index.html`, `script.js`, `script/` ou `estilizacao/` são refletidas diretamente no container, sem necessidade de rebuild.
 
 ```bash
 docker compose up -d --build frontend
@@ -132,3 +133,5 @@ MYSQL_ROOT_PASSWORD=sua_senha
 MYSQL_DATABASE=proj_cartao4
 MYSQL_PASSWORD=sua_senha
 MYSQL_HOST=mysql
+
+O arquivo `.env` está incluído no `.gitignore` para evitar que credenciais sejam enviadas ao repositório.
