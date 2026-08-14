@@ -18,5 +18,17 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+  frontend:
+    image: nginx:alpine
+    container_name: projeto_cartao_frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./script.js:/usr/share/nginx/html/script.js:ro
+      - ./script:/usr/share/nginx/html/script:ro
+      - ./estilizacao:/usr/share/nginx/html/estilizacao:ro
+    depends_on:
+      - backend
 volumes:
   mysql_data:
