@@ -4,16 +4,18 @@ import mysql.connector
 from flask import Blueprint, render_template
 from datetime import date
 from dateutil.relativedelta import relativedelta
+import os
 
 home_bp = Blueprint("home", __name__)
 
 
 def conecta_banco():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        database="projeto_cartao",
-        password="12345678"
+        host=os.getenv("MYSQL_HOST"),
+        port=int(os.getenv("MYSQL_PORT", "3306")),
+        database=os.getenv("MYSQL_DATABASE"),
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_PASSWORD"),
     )
 
 @home_bp.route("/home/lista_historico/")

@@ -3,15 +3,17 @@ from flask_cors import CORS
 import mysql.connector
 from flask import Blueprint
 from mysql.connector.errors import IntegrityError
+import os
 
 criacao_bp = Blueprint("criacao", __name__)
 
 def conecta_banco():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        database="proj_cartao4",
-        password="12345678"
+        host=os.getenv("MYSQL_HOST"),
+        port=int(os.getenv("MYSQL_PORT", "3306")),
+        database=os.getenv("MYSQL_DATABASE"),
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_PASSWORD"),
     )
 
 # área CRIAÇÃO

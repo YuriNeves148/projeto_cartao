@@ -6,6 +6,9 @@ from routes.home import home_bp
 from routes.criacao import criacao_bp
 from routes.individual import individual_db
 from routes.login import login_db
+from dotenv import load_dotenv
+load_dotenv()
+
 
 app = Flask(__name__)
 CORS(app)

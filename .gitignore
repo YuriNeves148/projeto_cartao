@@ -1,0 +1,8 @@
+# Credenciais e configurações locais
+.env
+.env.*
+!.env.example
+
+# Arquivos temporários do Python
+__pycache__/
+*.py[cod]

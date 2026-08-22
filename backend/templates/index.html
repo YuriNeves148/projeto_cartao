@@ -4,29 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-        <link
+    <head>
+    <link
       rel="stylesheet"
       href="{{ url_for('static', filename='estilizacao/style_home.css') }}"
     />
-  </head>
 
-        <link
+    <link
       rel="stylesheet"
       href="{{ url_for('static', filename='estilizacao/style_criacao.css') }}"
     />
-  </head>
 
-        <link
+    <link
       rel="stylesheet"
       href="{{ url_for('static', filename='estilizacao/style_compra.css') }}"
     />
-  </head>
 
-        <link
+    <link
       rel="stylesheet"
       href="{{ url_for('static', filename='estilizacao/style_individual.css') }}"
     />
-  </head>
   </head>
   <body>
     <div id="fundo">
@@ -357,7 +354,10 @@
     </div>
 
     <!--procurar como melhorar a aparicao dos resultados de listas-->
-    <script type="module" src="script.js" defer></script>
+    <script
+      type="module"
+      src="{{ url_for('static', filename='script.js') }}"
+    ></script>
     <!-- área home -->
     <script>
       window.addEventListener("DOMContentLoaded", () => {
