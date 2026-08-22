@@ -302,8 +302,3 @@ def gerador_parcela(cursor, id_compra, data_compra, qtd_parcela, valor_total):
         print(i, data_vencimento)
     #print("\n\nparcelas gerada!")
 
-
-"""
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
-"""

@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+        <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='estilizacao/style_home.css') }}"
+    />
+  </head>
+
+        <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='estilizacao/style_criacao.css') }}"
+    />
+  </head>
+
+        <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='estilizacao/style_compra.css') }}"
+    />
+  </head>
+
+        <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='estilizacao/style_individual.css') }}"
+    />
+  </head>
+  </head>
+  <body>
+    <div id="fundo">
+      <div id="mensagem_alerta" class="mensagem_alerta"></div>
+
+      <div id="container_section">
+        <div id="botoes_section">
+          <nav>
+            <button onclick="mostrar('sec_home')">área home</button>
+            <button onclick="mostrar('sec_criacao')">área de criação</button>
+            <button onclick="mostrar('sec_individual')">
+              gastos individuais
+            </button>
+            <button onclick="mostrar('sec_compra')">área de compras</button>
+          </nav>
+          <!-- janela para reembolso -->
+          <div id="janela_reembolso">
+            <div id="conteudo_reembolso">
+              <h1>registrar reembolso</h1>
+              <label>código selecionado:</label>
+              <input readonly id="cod_reembolso" class="input_reembolso" />
+              <label>valor do reembolso:</label>
+              <input
+                type="number"
+                placeholder="ex: 9.99"
+                id="valor_reembolso"
+                class="input_reembolso"
+              />
+              <label>data do reembolso</label>
+              <input type="date" id="data_reembolso" class="input_reembolso" />
+              <div id="botoes_reembolso">
+                <button id="salvar_reembolso">salvar</button>
+                <button id="cancelar_reembolso">cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="conteudo_section">
+        <section id="sec_home" class="pagina">
+          <h3>ÁREA HOME</h3>
+          <div id="fundo_home">
+            <div id="informacoes">
+              <div id="home">
+                <nav id="cabecalho_home">
+                  <p>Escolha o mês para ver os dados de compra:</p>
+                  <select name="sec_mes" id="escolha_mes">
+                    <option value="0">Janeiro</option>
+                    <option value="1">Fevereiro</option>
+                    <option value="2">Março</option>
+                    <option value="3">Abril</option>
+                    <option value="4">Maio</option>
+                    <option value="5">Junho</option>
+                    <option value="6">Julho</option>
+                    <option value="7">Agosto</option>
+                    <option value="8">Setembro</option>
+                    <option value="9">Outubro</option>
+                    <option value="10">Novembro</option>
+                    <option value="11">Dezembro</option>
+                  </select>
+                </nav>
+                <div id="nubank">
+                  <label>fatura nubank: </label>
+                  <section>
+                    <ul id="valor_nubank"></ul>
+                  </section>
+                </div>
+                <div id="c6">
+                  <label>fatura C6: </label>
+                  <section>
+                    <ul id="valor_c6"></ul>
+                  </section>
+                </div>
+              </div>
+            </div>
+            <div id="historico_fundo">
+              <div class="conteudo_historico">
+                <h3>histórico de compras do mês selecionado</h3>
+                <div id="sumario_historico">
+                  <p>data compra</p>
+                  <p>nome</p>
+                  <p>banco</p>
+                  <p>onde</p>
+                  <p>valor total</p>
+                  <p>qtd. parcela</p>
+                  <p>numero da parcela</p>
+                  <p>valor parcela</p>
+                </div>
+                <section>
+                  <div id="linha_compra">
+                    <ul id="lista_historico_home"></ul>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="sec_criacao" class="pagina">
+          <div id="criacao">
+            <div id="adicionar_entidade">
+              <h3>ÁREA DE CRIAÇÃO, EDIÇÃO E EXCLUSÃO</h3>
+              <nav id="nav_adicionar_entidade">
+                <div id="nav_input">
+                  <input
+                    type="text"
+                    id="input_pessoa"
+                    placeholder="digite o nome da pessoa"
+                  />
+                  <input
+                    type="text"
+                    id="input_banco"
+                    placeholder="digite o nome do banco"
+                  />
+                  <input
+                    type="text"
+                    id="input_loja"
+                    placeholder="digite onome de loja ou site"
+                  />
+                </div>
+                <div id="nav_adicionar" class="nav_botoes">
+                  <button id="btn_adicionar_pessoa">adicionar pessoa</button>
+                  <button id="btn_adicionar_banco">adicionar banco</button>
+                  <button id="btn_adicionar_loja">adicionar loja</button>
+                </div>
+                <div id="nav_editar" class="nav_botoes">
+                  <button id="editar_pessoa">editar pessoa</button>
+                  <button id="editar_banco">editar banco</button>
+                  <button id="editar_loja">editar loja</button>
+                </div>
+                <div
+                  id="nav_excluir"
+                  class="nav_botoes"
+                  class="nav_botoes_excluir"
+                >
+                  <button id="excluir_pessoa">excluir pessoa</button>
+                  <button id="excluir_banco">excluir banco</button>
+                  <button id="excluir_loja">excluir loja</button>
+                </div>
+              </nav>
+            </div>
+          </div>
+          <div id="area_lista">
+            <h3>LISTAS</h3>
+            <div id="sec_lista">
+              <div class="coluna_lista">
+                <h4>pessoas</h4>
+                <section id="sec_pessoa">
+                  <ul id="lista_pessoa_cont" class="linha_lista"></ul>
+                </section>
+              </div>
+              <div class="coluna_lista">
+                <h4>bancos</h4>
+                <section id="sec_banco">
+                  <ul id="lista_banco_cont" class="linha_lista"></ul>
+                </section>
+              </div>
+              <div class="coluna_lista">
+                <h4>lojas</h4>
+                <section id="sec_loja">
+                  <ul id="lista_loja_cont" class="linha_lista"></ul>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="sec_individual" class="pagina">
+          <div id="fundo_individual">
+            <nav id="nav_individual">
+              <p>Escolha o mês para ver os dados de compra:</p>
+              <select name="sec_mes" id="escolha_mes_individual">
+                <option value="0">Janeiro</option>
+                <option value="1">Fevereiro</option>
+                <option value="2">Março</option>
+                <option value="3">Abril</option>
+                <option value="4">Maio</option>
+                <option value="5">Junho</option>
+                <option value="6">Julho</option>
+                <option value="7">Agosto</option>
+                <option value="8">Setembro</option>
+                <option value="9">Outubro</option>
+                <option value="10">Novembro</option>
+                <option value="11">Dezembro</option>
+              </select>
+            </nav>
+            <div id="fundo_mostra_banco">
+              <div id="fundo_info_nubank">
+                <h1>fatura nubank</h1>
+                <div class="sumario_lista">
+                  <h4>nomes</h4>
+                  <h4>gastos</h4>
+                </div>
+                <div id="fundo_gasto_pessoa_nubank">
+                  <ul id="lista_gasto_nubank"></ul>
+                </div>
+                <section class="area_reembolso" hidden>
+                  <h2>reembolso</h2>
+                  <div class="legenda_reembolso">
+                    <span>código da compra</span>
+                    <span>data</span>
+                    <span>nome</span>
+                    <span>valor reembolsado</span>
+                  </div>
+                  <div class="lista_reembolso_rolavel">
+                    <ul id="reembolso_fatura_nubank"></ul>
+                  </div>
+                </section>
+                <div class="fundo_fat_individual">
+                  <table class="tabela_resumo_fatura">
+                    <thead>
+                      <tr>
+                        <th>Compras</th>
+                        <th>Reembolsos</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody id="fatura_total_nu"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div id="fundo_info_c6">
+                <h1>fatura c6</h1>
+                <div class="sumario_lista">
+                  <h4>nomes</h4>
+                  <h4>gastos</h4>
+                </div>
+                <div id="fundo_gasto_pessoa_c6">
+                  <ul id="lista_gasto_c6"></ul>
+                </div>
+                <section class="area_reembolso" hidden>
+                  <h2>reembolso</h2>
+                  <div class="legenda_reembolso">
+                    <span>código</span>
+                    <span>data reembolso</span>
+                    <span>nome</span>
+                    <span>valor reembolsado</span>
+                  </div>
+                  <div class="lista_reembolso_rolavel">
+                    <ul id="reembolso_fatura_c6"></ul>
+                  </div>
+                </section>
+                <div class="fundo_fat_individual">
+                  <table class="tabela_resumo_fatura">
+                    <thead>
+                      <tr>
+                        <th>Compras</th>
+                        <th>Reembolsos</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody id="fatura_total_c6"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="sec_compra" class="pagina">
+          <div id="fundo_compra">
+            <div id="fundo_nav">
+              <nav id="nav_adiciona_compra">
+                <input
+                  placeholder="codigo da compra"
+                  id="nav_codigo"
+                  readonly
+                />
+                <input type="date" placeholder="data da compra" id="nav_data" />
+
+                <div class="campo_com_sugestao">
+                  <input placeholder="quem comprou" id="nav_quem" />
+                  <ul id="pesquisa_pessoa" class="lista_pesquisa"></ul>
+                </div>
+                <div class="campo_com_sugestao">
+                  <input placeholder="banco utilizado" id="nav_banco" />
+                  <ul id="pesquisa_banco" class="lista_pesquisa"></ul>
+                </div>
+                <div class="campo_com_sugestao">
+                  <input
+                    placeholder="loja ou site feita a compra"
+                    id="nav_loja"
+                  />
+                  <ul id="pesquisa_loja" class="lista_pesquisa"></ul>
+                </div>
+                <input
+                  type="number"
+                  placeholder="valor total da compra"
+                  id="nav_valor_total"
+                />
+                <input
+                  type="number"
+                  placeholder="qtd. parcelas"
+                  id="nav_parcela"
+                />
+                <button id="salvar_compra">salvar compra</button>
+              </nav>
+              <div id="fundo_hist_compra">
+                <nav>
+                  <button id="btn_edita_compra">
+                    editar compra selecionada
+                  </button>
+                  <h1>histórico de compras</h1>
+                </nav>
+                <div id="fundo_hist_conteudo">
+                  <div id="cabecalho_lista_hist">
+                    <span id="cod">código</span>
+                    <span>data</span>
+                    <span>quem</span>
+                    <span>banco</span>
+                    <span>onde</span>
+                    <span>valor total</span>
+                    <span>parcelas</span>
+                    <span>valor parcela</span>
+                  </div>
+                  <ul id="hist_lista_cont"></ul>
+                </div>
+              </div>
+              <div id="fundo_baixo">
+                <nav id="conteudo_fundo_baixo">
+                  <button id="btn_apagar_inputs">apagar inputs</button>
+                  <button id="btn_excluir_compra">excluir compra</button>
+                  <button id="btn_reembolso">pedir reembolso</button>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!--procurar como melhorar a aparicao dos resultados de listas-->
+    <script type="module" src="script.js" defer></script>
+    <!-- área home -->
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        lista_historico_home("lista_historico_home");
+        historico_compra("hist_lista_cont");
+        // criacao
+        lista_loja_func("lista_loja_cont");
+        lista_banco_func("lista_banco_con");
+        lista_pessoa_func("lista_historico");
+        faturas("valor_nubank");
+        lista_pessoa_func("lista_pessoa_cont");
+        fatura(".valor_fat_individual");
+      });
+    </script>
+  </body>
+</html>

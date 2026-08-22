@@ -253,5 +253,3 @@ def reembolso():
     return jsonify({"nubank":retorno_nubank, "c6": retorno_c6})
 
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)

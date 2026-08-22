@@ -267,6 +267,4 @@ def editar_loja():
 
     return jsonify({"sucesso" : f"nome da loja/site atualizado para: '{nome}'"})
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
 
