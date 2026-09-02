@@ -8,11 +8,13 @@ from routes.individual import individual_db
 from routes.login import login_db
 from dotenv import load_dotenv
 load_dotenv()
+from flask_jwt_extended import JWTManager
 
 
 app = Flask(__name__)
 CORS(app)
-
+app.config["JWT_SECRET_KEY"] = "xcfvghj84561vghbjnk784561vhbj4651"
+jwt = JWTManager(app)
 
 app.register_blueprint(compra_bp)
 app.register_blueprint(home_bp)
@@ -24,7 +26,7 @@ app.register_blueprint(login_db)
 def login():
     return render_template("login.html")
 
-@app.route("/app")
+@app.route("/index")
 def pagina_principal():
     return render_template("index.html")
 

@@ -1,3 +1,12 @@
+// autorizacao
+const token = localStorage.getItem("token");
+const id_usuario = localStorage.getItem("id_usuario");
+console.log("id_usuario: ", id_usuario);
+// se o token nao existir, manda novamente para a tela de login
+if (!token) {
+  window.location.href = "/";
+}
+
 // poderia crar uma funcao apenas para adicionar pessoa, banco e loja*
 
 const api_url = "http://127.0.0.1:5000";
@@ -40,7 +49,10 @@ btn_adicionar_pessoa.addEventListener("click", async () => {
   try {
     const resposta = await fetch(`${api_url}/criacao/adicionar/pessoa`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ nome: nome_pessoa }),
     });
 
@@ -49,6 +61,7 @@ btn_adicionar_pessoa.addEventListener("click", async () => {
       return;
     }
     const dado = await resposta.json();
+    console.log(dado);
     console.log("nome adicionado: ", dado);
     input_pessoa.value = "";
     mostraAlerta("sucesso", "Pessoa cadastrada com sucesso!");
@@ -66,7 +79,10 @@ btn_adicionar_banco.addEventListener("click", async () => {
   try {
     const resposta = await fetch(`${api_url}/criacao/adicionar/banco`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ nome: nome_banco }),
     });
     if (!resposta.ok) {
@@ -93,7 +109,10 @@ btn_adicionar_loja.addEventListener("click", async () => {
   try {
     const resposta = await fetch(`${api_url}/criacao/adicionar/loja`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ nome: nome_loja }),
     });
     if (!resposta.ok) {
@@ -111,7 +130,14 @@ btn_adicionar_loja.addEventListener("click", async () => {
 
 // LISTAS
 export async function lista_pessoa_func() {
-  const resposta = await fetch(`${api_url}/criacao/lista_pessoa`);
+  const resposta = await fetch(`${api_url}/criacao/lista_pessoa`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application-json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
   if (!resposta.ok) {
     mostraAlerta("erro", "Nome da loja ou site já cadastrado!");
     return;
@@ -119,6 +145,8 @@ export async function lista_pessoa_func() {
   lista_pessoa_cont.innerHTML = "";
 
   const dado = await resposta.json();
+  console.log(dado);
+
   dado.forEach((secao) => {
     const novo_item = document.createElement("li");
     novo_item.textContent = `${secao.nome}`; // nome da coluna no banco
@@ -126,7 +154,6 @@ export async function lista_pessoa_func() {
     // sendo clicavel e adicionando no input
     novo_item.addEventListener("click", () => {
       input_pessoa.value = secao.nome;
-
       idPessoaEditando = secao.id_pessoa;
       nomePessoaEditando = secao.nome;
       input_pessoa.focus();
@@ -136,12 +163,19 @@ export async function lista_pessoa_func() {
 }
 
 export async function lista_banco_func() {
-  const resposta = await fetch(`${api_url}/criacao/lista_banco`);
+  const resposta = await fetch(`${api_url}/criacao/lista_banco`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (!resposta.ok) {
     alert("Nao foi possivel conetar a API (lista banco).");
     return;
   }
   const dado = await resposta.json();
+
   lista_banco_cont.value = "";
   dado.forEach((secao) => {
     const novo_item = document.createElement("li");
@@ -158,7 +192,13 @@ export async function lista_banco_func() {
 }
 
 export async function lista_loja_func() {
-  const resposta = await fetch(`${api_url}/criacao/lista_loja`);
+  const resposta = await fetch(`${api_url}/criacao/lista_loja`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (!resposta.ok) {
     alert("Nao foi possivel conetar a API (lista loja).");
     return;
@@ -191,7 +231,10 @@ btn_excluir_pessoa.addEventListener("click", async () => {
   try {
     const resposta = await fetch(`${api_url}/criacao/excluir_pessoa`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ pessoa: nome_pessoa }),
     });
     if (!resposta.ok) {
@@ -201,12 +244,11 @@ btn_excluir_pessoa.addEventListener("click", async () => {
       return;
     }
     const dado = await resposta.json();
-    mensagem_alerta("Pessoa deletada com sucesso", "sucesso");
-    console.log("retorno: ", dado);
+    mostraAlerta("sucesso", "Pessoa deletada com sucesso");
     return;
   } catch (erro) {
     console.error("Erro: ", erro);
-    mostraAlerta("erro", "Erro: ", v);
+    mostraAlerta("erro", `excluir pessoa: ${erro}`);
   }
 });
 
@@ -219,7 +261,10 @@ btn_excluir_loja.addEventListener("click", async () => {
   try {
     const resposta = await fetch(`${api_url}/criacao/excluir_loja`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ nome: input }),
     });
     if (!resposta.ok) {
@@ -250,7 +295,10 @@ btn_excluir_banco.addEventListener("click", async () => {
   try {
     const resposta = await fetch(`${api_url}/criacao/excluir_banco`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ nome: input }),
     });
     if (!resposta.ok) {
@@ -288,7 +336,10 @@ btn_editar_pessoa.addEventListener("click", async () => {
   try {
     const resposta = await fetch(`${api_url}/criacao/edita_pessoa`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({
         id_original: input_orig_id_nome,
         nome_original: input_orig_nome,
@@ -315,8 +366,7 @@ btn_editar_banco.addEventListener("click", async () => {
   const input_orig_id_nome = idBancoEditando;
   const input_orig_nome = nomeBancoEditando;
   const nome_alterado = input_banco.value.trim();
-  //console.log("nome original da lista: ", input_orig_nome);
-  //console.log("nome final: ", nome_alterado);
+
   if (
     input_orig_id_nome === null ||
     input_orig_nome === null ||
@@ -333,7 +383,10 @@ btn_editar_banco.addEventListener("click", async () => {
   try {
     const resposta = await fetch(`${api_url}/criacao/edita_banco`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({
         id_original: input_orig_id_nome,
         nome_original: input_orig_nome,
@@ -377,7 +430,10 @@ btn_editar_loja.addEventListener("click", async () => {
   try {
     const resposta = await fetch(`${api_url}/criacao/edita_loja`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({
         id_original: input_orig_id_nome,
         nome_original: input_orig_nome,

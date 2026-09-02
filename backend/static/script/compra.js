@@ -1,3 +1,8 @@
+//  Autorizacao
+const token = localStorage.getItem("token");
+const id_usuario = localStorage.getItem("id_usuario");
+console.log(id_usuario);
+
 const api_url = "http://127.0.0.1:5000";
 
 const lista_compra_cont = document.getElementById("hist_lista_cont");
@@ -46,8 +51,15 @@ let data_reembolso = document.getElementById("data_reembolso");
 // edicao
 const btn_edita_compra = document.getElementById("btn_edita_compra");
 
+// LISTA
 export async function historico_compra() {
-  const resposta = await fetch(`${api_url}/compra/lista`);
+  const resposta = await fetch(`${api_url}/compra/lista`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (!resposta.ok) {
     alert("Erro ao acessar ao exibir a lista (compra).");
@@ -98,6 +110,7 @@ export async function historico_compra() {
   });
 }
 
+// SALVAR
 btn_salvar_compra.addEventListener("click", async () => {
   const valor_codigo = codigo.value.trim();
   const valor_data = data.value.trim();
@@ -122,7 +135,10 @@ btn_salvar_compra.addEventListener("click", async () => {
   try {
     const resposta = await fetch(`${api_url}/compra/salvar`, {
       method: ["POST"],
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({
         valor_codigo: valor_codigo,
         data_comp: valor_data,
@@ -158,6 +174,7 @@ btn_salvar_compra.addEventListener("click", async () => {
   }
 });
 
+// EXCLUIR
 btn_excluir_compra.addEventListener("click", async () => {
   const valor_codigo = codigo.value.trim();
   const valor_data = data.value.trim();
@@ -183,7 +200,10 @@ btn_excluir_compra.addEventListener("click", async () => {
   try {
     const resposta = await fetch(`${api_url}/compra/excluir`, {
       method: ["DELETE"],
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({
         condigo_comp: valor_codigo,
       }),
@@ -347,6 +367,7 @@ btn_salvar_reembolso.addEventListener("click", async () => {
   }
 });
 
+// EDITAR
 btn_edita_compra.addEventListener("click", async () => {
   if (codigo.value === "") {
     mostraAlerta("aviso", "Selecione um item para editar.");
@@ -364,17 +385,15 @@ btn_edita_compra.addEventListener("click", async () => {
     mostraAlerta("aviso", "Preencha todos os campos para salvar a edição.");
     return;
   }
-  //const data_recebida = new Date(dataEditandoCompra);
-  //console.log("data recebida: ", data_recebida);
-  //const data_formatada = data_recebida.toISOString().split("T")[0];
-  //console.log(data_formatada);
-  //console.log("data escolhida para ser a atual: ", data.value);
   const formato_us = data.value.split("/").reverse().join("/");
-  //console.log("data formatada: ", formato_us);
+
   try {
     const resposta = await fetch(`${api_url}/compra/edicao`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({
         id: idEditandoCompra,
         data: formato_us,

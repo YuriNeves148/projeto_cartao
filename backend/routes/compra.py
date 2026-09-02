@@ -5,6 +5,8 @@ from flask import Blueprint
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 import os
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 compra_bp = Blueprint("compra", __name__)
 
 def conecta_banco():
@@ -18,24 +20,29 @@ def conecta_banco():
 
 # área COMPRA
 @compra_bp.route("/compra/lista")
+@jwt_required()
 def lista_compra():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
 
+    id_usuario = get_jwt_identity()
+    print('\n\nid_usuario: (compras)', id_usuario)
     sql = "select compra.id_compra, pessoa.nome as nome_pessoa, banco.nome as nome_banco, " \
     "lojasite.nome as onde, compra.data_compra, valor_total, qtd_parcela, " \
     "(compra.valor_total / compra.qtd_parcela) as valor_parcela " \
     "from compra join pessoa on pessoa.id_pessoa = compra.id_pessoa " \
     "join banco on banco.id_banco = compra.id_banco " \
     "join lojasite on lojasite.id_lojasite = compra.id_lojasite " \
+    "where compra.id_usuario = %s" \
     "order by compra.id_compra asc;"
 
-    cursor.execute(sql)
+    cursor.execute(sql, (id_usuario,))
     dados = cursor.fetchall()
-    #print(dados)
+    print('Dados de compra: ', dados)
     return jsonify(dados)
 
 @compra_bp.route("/compra/salvar", methods=["POST"])
+@jwt_required()
 def salvar_compra():
     dados = request.get_json()
     codigo = dados.get("valor_codigo")
@@ -46,42 +53,44 @@ def salvar_compra():
     valor_total = dados.get("valor_total_comp")
     qtd_parcela = dados.get("qtd_parcela_comp")
 
+    id_usuario = get_jwt_identity()
+
     conexao = conecta_banco()
     cursor = conexao.cursor(buffered=True)
 
     # verificando se compra já existe
-    cursor.execute("SELECT id_compra FROM compra WHERE id_compra = %s", (codigo,))
+    cursor.execute("SELECT id_compra FROM compra WHERE id_compra = %s AND id_usuario = %s", (codigo, id_usuario))
     verifica_compra = cursor.fetchone()
     
     if verifica_compra is not None:
         print("\n\nNao salvar")
         return jsonify({"cliclou":"Essa compra já existe. Apague os inputs e tente novamente."})
-    print("\n\nAcessa pessoa")
+
     # encontrando id do nome
-    sql_id_nome = "SELECT id_pessoa FROM pessoa WHERE nome = %s"
-    cursor.execute(sql_id_nome, (nome,))
+    sql_id_nome = "SELECT id_pessoa FROM pessoa WHERE nome = %s AND id_usuario = %s"
+    cursor.execute(sql_id_nome, (nome, id_usuario))
     id_pessoa = cursor.fetchone()
     if id_pessoa is None:
         return jsonify({"mesma_compra":"A pessoa informada não está salva no banco de dados.\nVerifique a lista de pessoas em 'Área Criação'"})
-    print("\n\nAcessa banco")
+
     # encontrando id do banco
-    sql_id_banco = "SELECT id_banco FROM banco WHERE nome = %s"
-    cursor.execute(sql_id_banco, (banco,))
+    sql_id_banco = "SELECT id_banco FROM banco WHERE nome = %s AND id_usuario = %s"
+    cursor.execute(sql_id_banco, (banco, id_usuario))
     id_banco = cursor.fetchone()
     if id_banco is None:
         return jsonify({"erro":"O banco informado não está salvo no banco de dados.\nVerifique a lista de bancos em 'Área Criação'"})
-    print("\n\nAcessa loja")
+
     # encontrando id da loja
-    sql_id_loja = "SELECT id_lojasite FROM lojasite WHERE nome = %s"
-    cursor.execute(sql_id_loja, (loja,))
+    sql_id_loja = "SELECT id_lojasite FROM lojasite WHERE nome = %s AND id_usuario = %s"
+    cursor.execute(sql_id_loja, (loja, id_usuario))
     id_loja = cursor.fetchone()
     if id_loja is None:
         return jsonify({"erro":"A loja/site informada não está salva no banco de dados.\nVerifique a lista de loja/site em 'Área Criação'"})
-    print("\n\n insere no banco")
+
     sql_salvar = "INSERT INTO compra " \
-    "(id_pessoa, id_banco, id_lojasite, data_compra, valor_total, qtd_parcela) VALUES" \
-    "(%s, %s, %s, %s, %s, %s)"
-    cursor.execute(sql_salvar, (id_pessoa[0], id_banco[0], id_loja[0], data, valor_total, qtd_parcela))
+    "(id_pessoa, id_banco, id_lojasite, data_compra, valor_total, qtd_parcela, id_usuario) VALUES" \
+    "(%s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(sql_salvar, (id_pessoa[0], id_banco[0], id_loja[0], data, valor_total, qtd_parcela, id_usuario))
     print("Inserido")
 
     # gerando parcelas:
@@ -102,15 +111,18 @@ def salvar_compra():
     return jsonify({"sucesso":"Compra adicionada!"}), 200
 
 @compra_bp.route("/compra/excluir", methods=["DELETE"])
+@jwt_required()
 def exclui_compra():
     dados = request.get_json()
     codigo = dados.get("condigo_comp")
+
+    id_usuario = get_jwt_identity()
     
     conexao = conecta_banco()
     cursor = conexao.cursor()
 
     cursor.execute("DELETE FROM parcela WHERE id_compra = %s", (codigo,))
-    cursor.execute("DELETE FROM compra WHERE id_compra = %s", (codigo,))
+    cursor.execute("DELETE FROM compra WHERE id_compra = %s AND id_usuario = %s", (codigo, id_usuario))
     conexao.commit()
 
     return jsonify({"success":"Compra excluida com sucesso"}), 200
@@ -150,6 +162,7 @@ def salvar_reembolso():
     valor_reembolso = dados.get("valor")
     data_reembolso = dados.get("data")  
 
+
     conexao = conecta_banco()
     cursor = conexao.cursor()
 
@@ -164,9 +177,9 @@ def salvar_reembolso():
     return jsonify({"sucesso":"reembolso registrado!"}), 201
 
 @compra_bp.route("/compra/edicao", methods=["PUT"])
+@jwt_required()
 def editar_compra():
     dados = request.get_json()
-
     id_compra = dados.get("id")
     data = dados.get("data")
     nome = dados.get("nome")
@@ -175,14 +188,16 @@ def editar_compra():
     valor_total = dados.get("valor_total")
     qtd_parcela = dados.get("qtd_parcela")
 
+    id_usuario = get_jwt_identity()
+
     conexao = conecta_banco()
     cursor = conexao.cursor(buffered=True)
 
     try:
         # procura pessoa
         cursor.execute(
-            "SELECT id_pessoa FROM pessoa WHERE nome = %s",
-            (nome,)
+            "SELECT id_pessoa FROM pessoa WHERE nome = %s AND id_usuario = %s",
+            (nome, id_usuario)
         )
         id_pessoa = cursor.fetchone()
 
@@ -193,8 +208,8 @@ def editar_compra():
 
         # procura banco
         cursor.execute(
-            "SELECT id_banco FROM banco WHERE nome = %s",
-            (banco,)
+            "SELECT id_banco FROM banco WHERE nome = %s AND id_usuario = %s",
+            (banco, id_usuario)
         )
         id_banco = cursor.fetchone()
 
@@ -205,8 +220,8 @@ def editar_compra():
 
         # procura loja
         cursor.execute(
-            "SELECT id_lojasite FROM lojasite WHERE nome = %s",
-            (loja,)
+            "SELECT id_lojasite FROM lojasite WHERE nome = %s AND id_usuario = %s",
+            (loja, id_usuario)
         )
         id_loja = cursor.fetchone()
 
@@ -225,7 +240,7 @@ def editar_compra():
                 data_compra = %s,
                 valor_total = %s,
                 qtd_parcela = %s
-            WHERE id_compra = %s
+            WHERE id_compra = %s AND id_usuario = %s
         """
 
         cursor.execute(sql, (
@@ -235,12 +250,13 @@ def editar_compra():
             data,
             valor_total,
             qtd_parcela,
-            id_compra
+            id_compra,
+            id_usuario
         ))
 
         # apaga as parcelas antigas
         cursor.execute(
-            "DELETE FROM parcela WHERE id_compra = %s",
+            "DELETE FROM parcela WHERE id_compra = %s ",
             (id_compra,)
         )
 
