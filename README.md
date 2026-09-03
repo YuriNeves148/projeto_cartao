@@ -32,6 +32,11 @@ projeto_cartao/
 └── README.md
 ```
 
+## Demonstração
+
+<img width="1302" height="810" alt="Captura de tela de 2026-09-03 18-23-32" src="https://github.com/user-attachments/assets/12d4c3a2-a194-4b85-86aa-742aec17726c" />
+
+
 ## Como rodar o projeto
 
 ### 1. Subir os containers
