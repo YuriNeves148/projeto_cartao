@@ -1,7 +1,7 @@
 # Sistema de Gerenciamento de Faturas de Cartão
 
-Imagine uma pessoa que empresta seu cartão de crédito para outras 4 pessoas fazerem compras; como o dono do cartão saberá qual compra foi feita ou por quem foi feita? Como ele vai saber quanto cada pessoa deverá transferir para ele?
-A ideia dessa aplicação é o dono do cartão poder fazer essa organização de quem e fez compras e quanto gastou.
+Imagine uma pessoa que empresta o próprio cartão de crédito para outras **4 pessoas** fazerem compras; como o dono do cartão saberá qual compra foi feita ou por quem foi feita? Como ele vai saber **quanto** cada pessoa deverá transferir para ele?
+A ideia dessa aplicação é o dono do cartão poder fazer essa organização de **quem e fez compras e quanto gastou**.
 
 O projeto foi desenvolvido como projeto pessoal com o objetivo de praticar desenvolvimento **backend, frontend, banco de dados, APIs, autenticação e containerização**.
 
