@@ -65,65 +65,67 @@ Você deve ver três containers rodando:
 
 Abra no navegador:
 
-```
+```text
 http://localhost:8080
 ```
 
-O backend fica exposto em `http://localhost:5000` e o MySQL em `localhost:3306` (útil para conectar com um cliente externo, como MySQL Workbench ou DBeaver).
+A aplicação estará disponível através do frontend (Nginx).
+
+As demais portas ficam disponíveis para acesso aos serviços:
+
+* **Backend (Flask):** `http://localhost:5000`
+* **MySQL:** `localhost:3306`
+
+A porta do MySQL pode ser utilizada para conectar ao banco através de ferramentas externas, como MySQL Workbench ou DBeaver.
 
 ## Importar dados existentes no banco (opcional)
 
-Se você tiver um dump `.sql` com dados (por exemplo, na pasta `dados_banco_de_dados/`), com os containers já rodando:
+Caso você já possua um dump `.sql` com dados do projeto, é possível importá-lo manualmente com os containers em execução.
+
+Por exemplo, se os arquivos estiverem na pasta `dados_banco_de_dados/`:
 
 ```bash
 for f in dados_banco_de_dados/*.sql; do
   docker exec -i projeto_cartao_mysql mysql -uroot -p proj_cartao4 < "$f"
 done
 ```
-O comando solicitará a senha definida em MYSQL_ROOT_PASSWORD no arquivo .env.
 
-> Se der erro de foreign key, importe os arquivos em ordem manualmente, respeitando as dependências entre tabelas (ex: `pessoa` antes de `compra`).
+O comando solicitará a senha definida em `MYSQL_ROOT_PASSWORD` no arquivo `.env`.
+
+> **Importante:** essa etapa é opcional e não deve ser necessária para uma instalação normal do projeto. Os dados necessários para testar a aplicação serão configurados automaticamente durante a inicialização do banco de dados.
+
+Caso ocorra algum erro relacionado a **foreign keys**, os arquivos `.sql` deverão ser importados respeitando a ordem de dependência entre as tabelas. Por exemplo, os registros de `pessoa` devem existir antes dos registros de `compra` que fazem referência a eles.
 
 ## Persistência de dados
 
-Os dados do MySQL são armazenados em um **volume nomeado** (`mysql_data`), então eles sobrevivem a `docker compose down` e `docker compose up`.
+Os dados do MySQL são armazenados em um **volume Docker nomeado** chamado `mysql_data`.
+
+Para parar os containers:
 
 ```bash
-docker compose down      # remove os containers, mantém os dados
-docker compose up -d     # recria os containers, dados continuam lá
+docker compose down
 ```
 
-**Cuidado:** o comando abaixo apaga os dados do banco de propósito — use só se quiser resetar tudo:
+Para iniciá-los novamente:
+
+```bash
+docker compose up -d
+```
+
+Os dados existentes no banco serão preservados.
+
+### Resetar o banco de dados
+
+Caso queira apagar completamente os dados do banco e iniciar uma nova instalação:
 
 ```bash
 docker compose down -v
 ```
 
-## Desenvolvimento
+> **Cuidado:** o parâmetro `-v` remove os volumes associados aos containers. Isso apagará os dados armazenados no volume `mysql_data`.
 
-O backend usa um **bind mount** (`./backend:/app`), então alterações no código Python refletem automaticamente dentro do container, sem precisar rebuildar a imagem. Como o Flask roda em modo debug (`debug=True`), o servidor reinicia sozinho a cada alteração salva.
-
-O frontend utiliza a imagem `nginx:alpine` e os arquivos estáticos são montados diretamente no container por meio de volumes. Portanto, alterações em `index.html`, `script.js`, `script/` ou `estilizacao/` são refletidas diretamente no container, sem necessidade de rebuild.
-
-```bash
-docker compose up -d --build frontend
-```
-
-## Comandos úteis
-
-| Ação                              | Comando                                                                     |
-| --------------------------------- | --------------------------------------------------------------------------- |
-| Ver logs do backend               | `docker logs -f projeto_cartao_backend`                                     |
-| Ver logs do MySQL                 | `docker logs -f projeto_cartao_mysql`                                       |
-| Entrar no container do MySQL      | `docker exec -it projeto_cartao_mysql mysql -uroot -p proj_cartao4` |
-| Parar tudo                        | `docker compose down`                                                       |
-| Parar tudo e apagar dados         | `docker compose down -v`                                                    |
-| Reconstruir um serviço específico | `docker compose up -d --build <nome_do_serviço>`                            |
-| Ver volumes existentes            | `docker volume ls`                                                          |
 
 ### Variáveis de ambiente
-
-As configurações sensíveis do banco de dados são armazenadas em um arquivo `.env`, que não deve ser enviado ao GitHub.
 
 Utilize o arquivo `.env.example` como modelo para criar seu próprio `.env`.
 
@@ -134,4 +136,3 @@ MYSQL_DATABASE=proj_cartao4
 MYSQL_PASSWORD=sua_senha
 MYSQL_HOST=mysql
 
-O arquivo `.env` está incluído no `.gitignore` para evitar que credenciais sejam enviadas ao repositório.
