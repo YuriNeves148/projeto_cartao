@@ -85,21 +85,18 @@ A porta do MySQL pode ser utilizada para conectar ao banco através de ferrament
 
 ## Importar dados existentes no banco (opcional)
 
-Caso você já possua um dump `.sql` com dados do projeto, é possível importá-lo manualmente com os containers em execução.
+Na pasta `bancodedados/` há um dump `.sql` contendo dados fictícios utilizados para testes do projeto.
 
-Por exemplo, se os arquivos estiverem na pasta `dados_banco_de_dados/`:
+Caso seja necessário importar esses dados manualmente, com os containers em execução, execute:
 
 ```bash
-for f in dados_banco_de_dados/*.sql; do
+for f in bancodedados/*.sql; do
   docker exec -i projeto_cartao_mysql mysql -uroot -p proj_cartao4 < "$f"
 done
 ```
 
 O comando solicitará a senha definida em `MYSQL_ROOT_PASSWORD` no arquivo `.env`.
 
-> **Importante:** essa etapa é opcional e não deve ser necessária para uma instalação normal do projeto. Os dados necessários para testar a aplicação serão configurados automaticamente durante a inicialização do banco de dados.
-
-Caso ocorra algum erro relacionado a **foreign keys**, os arquivos `.sql` deverão ser importados respeitando a ordem de dependência entre as tabelas. Por exemplo, os registros de `pessoa` devem existir antes dos registros de `compra` que fazem referência a eles.
 
 ## Persistência de dados
 
