@@ -1,6 +1,7 @@
 # Sistema de Gerenciamento de Faturas de Cartão
 
-Aplicação web desenvolvida para gerenciamento de **compras, parcelas, faturas e reembolsos de cartões de crédito**.
+Imagine uma pessoa que empresta seu cartão de crédito para outras 4 pessoas fazerem compras; como o dono do cartão saberá qual compra foi feita ou por quem foi feita? Como ele vai saber quanto cada pessoa deverá transferir para ele?
+A ideia dessa aplicação é o dono do cartão poder fazer essa organização de quem e fez compras e quanto gastou.
 
 O projeto foi desenvolvido como projeto pessoal com o objetivo de praticar desenvolvimento **backend, frontend, banco de dados, APIs, autenticação e containerização**.
 
@@ -11,7 +12,7 @@ O projeto foi desenvolvido como projeto pessoal com o objetivo de praticar desen
 * **MySQL**
 * **JavaScript**
 * **HTML/CSS**
-* **Docker / Docker Compose**
+* **Docker**
 * **JWT** para autenticação
 
 ## Funcionalidades
@@ -31,11 +32,13 @@ O projeto possui diferentes branches para separar etapas e funcionalidades do de
 
 * **`main`** — versão principal do projeto
 * **`docker`** — versão preparada para execução utilizando Docker
-* **branch de desenvolvimento** — versão da aplicação sem containerização
+* **`autenticação`** - versão que está em desenvolvimento
 
-A autenticação utilizando JWT está atualmente em desenvolvimento e será integrada à aplicação principal.
+## Observações
+* O projeto foi feito para tratar uma deficiência que eu (autor do projeto) gostaria de tratar que seria: mais controle dos gastos do meu cartão de crédito, sendo assim, o banco de dados aceita somente dois bancos, exclusivamente, sendo eles Nubank e C6. Por mais que seja um detalhe que poderia ser resolvido com um simples tratamento no banco de dados, isso influenciaria na arquitetura das páginas e na visualização dos dados, sendo assim, essa falta será tratada ao final da execução da autenticação.
 
-## Execução
+
+## Execução 
 
 ### Sem Docker
 
