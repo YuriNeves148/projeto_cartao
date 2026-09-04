@@ -70,11 +70,6 @@ def faturas():
     ano = int(ano)
     data_fim = date(ano, mes_sql, 17)
 
-    # resolvendo problema de fatura
-    #data_fim = date(ano, mes_sql, 17)
-    #data_inicio = data_fim - relativedelta(months=1)
-    #data_inicio = data_inicio.replace(day=10)
-
     # selecionando para NUBANK
     sql_nu = "select sum(compra.valor_total/compra.qtd_parcela) as valor_fatura_nubank " \
     "from compra " \

@@ -128,19 +128,22 @@ def exclui_compra():
     return jsonify({"success":"Compra excluida com sucesso"}), 200
 
 @compra_bp.route("/compra/verifica_input/<tipo>")
+@jwt_required()
 def buscar(tipo):
-    print("tipo recebido: ", tipo)
     dado = request.args.get("q", "")
-    print("digitado: ", dado)
+    
+    id_usuario = get_jwt_identity()
+    print("\n\n\nid_usuario: ", id_usuario)
+
     conexao = conecta_banco()
     cursor = conexao.cursor()
 
     if tipo == "pessoa":
-        cursor.execute("SELECT nome FROM pessoa WHERE nome LIKE %s LIMIT 10", (f"%{dado}%",))
+        cursor.execute("SELECT nome FROM pessoa WHERE nome LIKE %s AND id_usuario = %s LIMIT 10 ", (f"%{dado}%", id_usuario))
     elif tipo == "banco":
-        cursor.execute("SELECT nome FROM banco WHERE nome LIKE %s LIMIT 10", (f"%{dado}%",))
+        cursor.execute("SELECT nome FROM banco WHERE nome LIKE %s AND id_usuario = %s LIMIT 10", (f"%{dado}%", id_usuario))
     elif tipo == "loja":
-        cursor.execute("SELECT nome FROM lojasite WHERE nome LIKE %s LIMIT 10", (f"%{dado}%",))
+        cursor.execute("SELECT nome FROM lojasite WHERE nome LIKE %s AND id_usuario = %s LIMIT 10", (f"%{dado}%", id_usuario))
 
     else:
         return jsonify([]), 400

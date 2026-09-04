@@ -252,7 +252,13 @@ function configurarBusca(input, lista, tipo) {
       return;
     }
 
-    fetch(`${api_url}/compra/verifica_input/${tipo}?q=${texto}`)
+    fetch(`${api_url}/compra/verifica_input/${tipo}?q=${texto}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((resposta) => resposta.json())
       .then((dado) => {
         lista.innerHTML = "";

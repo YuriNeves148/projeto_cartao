@@ -18,6 +18,7 @@ def conecta_banco():
     )
 
 @individual_db.route("/individual/listas/")
+
 def lista_ind_nubank():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
@@ -43,17 +44,19 @@ def lista_ind_nubank():
     "FROM compra JOIN pessoa ON compra.id_pessoa = pessoa.id_pessoa " \
     "JOIN parcela ON compra.id_compra = parcela.id_compra " \
     "JOIN banco ON compra.id_banco = banco.id_banco " \
-    "WHERE banco.nome = 'C6' AND parcela.data_vencimento = %s " \
+    "WHERE banco.nome = 'C6' AND parcela.data_vencimento =  %s" \
     "GROUP BY pessoa.id_pessoa, pessoa.nome;"
 
+
     cursor.execute(sql_nu, (data_fim,))
+
     dado_nubank = cursor.fetchall()
 
     cursor.execute(sql_c6, (data_fim,))
     dado_c6 = cursor.fetchall()
 
-    #print("fatura por pessoa NUBANK: ", dado_nubank)
-    #print("fatura por pessoa C6: ", dado_c6)
+    print("\n\nfatura por pessoa NUBANK: ", dado_nubank)
+    print("fatura por pessoa C6: ", dado_c6)
 
     cursor.close()
     conexao.close()
@@ -64,7 +67,7 @@ def lista_ind_nubank():
 def fatura():
     conexao = conecta_banco()
     cursor = conexao.cursor(dictionary=True)
-
+    
     mes = request.args.get("mes")
     ano = request.args.get("ano", date.today().year)
 
@@ -247,7 +250,7 @@ def reembolso():
     "AND banco.nome = 'C6';"
     cursor.execute(lista_c6, (data_inicio, data_final))
     retorno_c6 = cursor.fetchall()
-    print("\n\n retorno c6: ", retorno_c6)
+    #print("\n\n retorno c6: ", retorno_c6)
 
     cursor.close()
     conexao.close()
