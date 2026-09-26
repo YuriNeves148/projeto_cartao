@@ -4,15 +4,19 @@ import mysql.connector
 from flask import Blueprint
 from datetime import date
 from dateutil.relativedelta import relativedelta
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 individual_db = Blueprint("individual", __name__)
 
 def conecta_banco():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        database="projeto_cartao",
-        password="12345678"
+        host=os.getenv("MYSQL_HOST"),
+        user=os.getenv("MYSQL_USER"),
+        database=os.getenv("MYSQL_DATABASE"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        port=os.getenv("MYSQL_PORT")
     )
 
 @individual_db.route("/individual/listas/")
@@ -245,7 +249,7 @@ def reembolso():
     "AND banco.nome = 'C6';"
     cursor.execute(lista_c6, (data_inicio, data_final))
     retorno_c6 = cursor.fetchall()
-    print("\n\n retorno c6: ", retorno_c6)
+    #print("\n\n retorno c6: ", retorno_c6)
 
     cursor.close()
     conexao.close()

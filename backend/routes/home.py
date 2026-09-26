@@ -4,15 +4,19 @@ import mysql.connector
 from flask import Blueprint
 from datetime import date
 from dateutil.relativedelta import relativedelta
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 home_bp = Blueprint("home", __name__)
 
 def conecta_banco():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        database="projeto_cartao",
-        password="12345678"
+        host=os.getenv("MYSQL_HOST"),
+        user=os.getenv("MYSQL_USER"),
+        database=os.getenv("MYSQL_DATABASE"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        port=os.getenv("MYSQL_PORT")
     )
 
 @home_bp.route("/home/lista_historico/")
@@ -25,15 +29,11 @@ def lista_historico():
     if mes is None:
         return jsonify({"erro":"selecione um mes para prosseguir"})
     mes_sql = int(mes) + 1
-    #print("mes escolhido: ",mes_sql)
     ano = int(ano)
-    # resolvendo problema de fatura
     data_fim = date(ano, mes_sql, 17)
+
+    # encontra 
     
-    #data_inicio = data_fim - relativedelta(months=1)
-    #data_inicio = data_inicio.replace(day=10)
-    #print(data_inicio)
-    #print(data_fim)
     sql = "select compra.data_compra, pessoa.nome as pessoa, banco.nome as banco, compra.valor_total, " \
     "compra.qtd_parcela, (compra.valor_total/compra.qtd_parcela) as valor_parcela, lojasite.nome as lojasite, " \
     "parcela.numero_parcela as numero_parcela " \
@@ -43,11 +43,10 @@ def lista_historico():
     "join banco on compra.id_banco = banco.id_banco " \
     "join lojasite on compra.id_lojasite = lojasite.id_lojasite " \
     "where parcela.data_vencimento = %s order by pessoa.nome;"
-    
 
     cursor.execute(sql, (data_fim,))
     dado = cursor.fetchall()
-    #print("DADOS: ",dado)
+
     cursor.close()
     conexao.close()
 
@@ -66,11 +65,6 @@ def faturas():
     mes_sql = int(mes) + 1
     ano = int(ano)
     data_fim = date(ano, mes_sql, 17)
-
-    # resolvendo problema de fatura
-    #data_fim = date(ano, mes_sql, 17)
-    #data_inicio = data_fim - relativedelta(months=1)
-    #data_inicio = data_inicio.replace(day=10)
 
     # selecionando para NUBANK
     sql_nu = "select sum(compra.valor_total/compra.qtd_parcela) as valor_fatura_nubank " \

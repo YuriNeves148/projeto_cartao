@@ -4,17 +4,20 @@ import mysql.connector
 from flask import Blueprint
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 compra_bp = Blueprint("compra", __name__)
 
 def conecta_banco():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        database="projeto_cartao",
-        password="12345678"
+        host=os.getenv("MYSQL_HOST"),
+        user=os.getenv("MYSQL_USER"),
+        database=os.getenv("MYSQL_DATABASE"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        port=os.getenv("MYSQL_PORT")
     )
-
 # área COMPRA
 @compra_bp.route("/compra/lista")
 def lista_compra():
