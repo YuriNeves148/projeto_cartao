@@ -25,7 +25,8 @@ def lista_historico():
     cursor = conexao.cursor(dictionary=True)
 
     mes = request.args.get("mes")
-    ano = request.args.get("ano", date.today().year)
+    ano = request.args.get("ano")
+
     if mes is None:
         return jsonify({"erro":"selecione um mes para prosseguir"})
     mes_sql = int(mes) + 1

@@ -34,7 +34,7 @@ def lista_compra():
 
     cursor.execute(sql)
     dados = cursor.fetchall()
-    #print(dados)
+    print(dados)
     return jsonify(dados)
 
 @compra_bp.route("/compra/salvar", methods=["POST"])
@@ -42,6 +42,7 @@ def salvar_compra():
     dados = request.get_json()
     codigo = dados.get("valor_codigo")
     data = dados.get("data_comp")
+    print("data da compra: ", data)
     nome = dados.get("nome_comp")
     banco = dados.get("banco_comp")
     loja = dados.get("loja_comp")
@@ -80,6 +81,7 @@ def salvar_compra():
     if id_loja is None:
         return jsonify({"erro":"A loja/site informada não está salva no banco de dados.\nVerifique a lista de loja/site em 'Área Criação'"})
     print("\n\n insere no banco")
+    print(data)
     sql_salvar = "INSERT INTO compra " \
     "(id_pessoa, id_banco, id_lojasite, data_compra, valor_total, qtd_parcela) VALUES" \
     "(%s, %s, %s, %s, %s, %s)"
@@ -273,19 +275,19 @@ def editar_compra():
 # adicionando parcelas a cada compra
 def gerador_parcela(cursor, id_compra, data_compra, qtd_parcela, valor_total):
     print("adicionando em parcela")
+    print("data da parcela: ", data_compra)
     qtd_parcela = int(qtd_parcela)
     data_compra = datetime.strptime(data_compra,"%Y-%m-%d").date()
-
+    print('depois: ', data_compra)
     valor_parcela = round(float(valor_total) / qtd_parcela, 2)
 
-    # se for
+    # compra feita antes aou depois do dia do fechamento?
     if data_compra.day < 10: 
         primeira_parc = date(
             data_compra.year,
             data_compra.month,
             17
         )
-    # compra feita depois do fechamento
     else:
         # se no final do ano
         if data_compra.month == 12:
