@@ -1,67 +1,72 @@
 # Sistema de Gerenciamento de Faturas de Cartão
-Imagine uma pessoa que empresta o próprio cartão de crédito para outras 4 pessoas fazerem compras; como o dono do cartão saberá qual compra foi feita ou por quem foi feita? Como ele vai saber quanto cada pessoa deverá transferir para ele? A ideia dessa aplicação é o dono do cartão poder fazer essa organização de quem e fez compras e quanto gastou.
 
-O projeto foi desenvolvido como projeto pessoal com o objetivo de praticar desenvolvimento backend, frontend, banco de dados, APIs, autenticação e containerização.
+> Aplicação para organização e controle de compras efetuadas por terceiros em cartão de crédito próprio.
 
-# Tecnologias
-- Python
-- Flask
-- MySQL
-- JavaScript
-- HTML/CSS
+---
 
-# Funcionalidades
-- Cadastro e gerenciamento de pessoas
-- Cadastro de bancos e lojas
-- Registro de compras
-- Divisão de compras em parcelas
-- Geração e consulta de faturas
-- Consulta do histórico de compras
-- Registro de reembolsos
+## Sobre o Projeto
 
-Estrutura do projeto
-O projeto possui diferentes branches para separar etapas e funcionalidades do desenvolvimento:
+Imagine uma pessoa que empresta o próprio cartão de crédito para outras 4 pessoas fazerem compras. Como o dono do cartão saberá qual compra foi feita por quem? Como ele saberá quanto cada pessoa deverá transferir para ele?
 
-main — versão principal do projeto
-docker — versão preparada para execução utilizando Docker
-autenticação - versão que está em desenvolvimento
-apresentacao - utilizada para apresentar as funcionalidades principais do projeto
+A ideia desta aplicação é permitir que o dono do cartão organize **quem fez as compras** e **quanto cada um gastou**.
 
-# Observações
-O projeto foi feito para tratar uma deficiência que eu (autor do projeto) gostaria de tratar que seria: mais controle dos gastos do meu cartão de crédito, sendo assim, o banco de dados aceita somente dois bancos, exclusivamente, sendo eles Nubank e C6. Por mais que seja um detalhe que poderia ser resolvido com um simples tratamento no banco de dados, isso influenciaria na arquitetura das páginas e na visualização dos dados, sendo assim, essa falta será tratada ao final da execução da autenticação.
+O projeto foi desenvolvido como um projeto pessoal com o objetivo de praticar:
+- Desenvolvimento backend e frontend
+- Banco de dados e modelagem SQL
+- Criação e consumo de APIs
+- Autenticação e autorização
+- Containerização com Docker
 
-# Execução
-Sem Docker
-Instale as dependências do projeto e configure a conexão com o banco de dados MySQL.
+---
 
-Depois, execute a aplicação Flask com: 
-  python app.py
-Acesse o site pelo Live Server no arquivo: 
-  index.html
+## Tecnologias Utilizadas
 
-# Banco de dados
-O sistema utiliza MySQL para armazenar informações relacionadas a:
+- **Linguagens:** Python, JavaScript, HTML5, CSS3
+- **Framework:** Flask
+- **Banco de Dados:** MySQL
 
-Usuários
-Pessoas
-Bancos
-Lojas
-Compras
-Parcelas
-Reembolsos
+---
 
-# Objetivo
-O projeto tem como objetivo aplicar, na prática, conceitos de desenvolvimento de aplicações web, incluindo:
+## Funcionalidades
 
-Desenvolvimento de APIs REST
-Integração entre Flask e MySQL
-Modelagem e consultas SQL
-Desenvolvimento de interface web
-Autenticação e autorização
-Controle de versões com Git
-Containerização com Docker
+- **Gerenciamento:** Cadastro e gerenciamento de pessoas, bancos e lojas.
+- **Compras:** Registro de compras e divisão em parcelas.
+- **Faturas:** Geração, consulta de faturas e histórico de compras.
+- **Reembolsos:** Registro e controle de pagamentos/reembolsos.
 
-# Status
-Em desenvolvimento
+---
 
-Novas funcionalidades e melhorias estão sendo implementadas, principalmente na área de autenticação e gerenciamento de usuários.
+## Estrutura de Branches
+
+O projeto possui diferentes *branches* para separar etapas e funcionalidades do desenvolvimento:
+
+- `main` — Versão principal do projeto
+- `docker` — Versão preparada para execução utilizando Docker
+- `autenticação` — Versão em desenvolvimento para sistema de login
+- `apresentacao` — Utilizada para apresentar as funcionalidades principais
+
+---
+
+## Observações Importantes
+
+> O projeto foi feito para solucionar uma necessidade específica do autor: ter mais controle dos gastos do próprio cartão de crédito.
+
+Por conta disso, o banco de dados atualmente aceita apenas **dois bancos específicos**: **Nubank** e **C6 Bank**. 
+
+*Nota: Essa limitação afeta a arquitetura das páginas e a visualização dos dados, e será tratada logo após a conclusão do módulo de autenticação.*
+
+---
+
+## Como Executar o Projeto
+
+### Sem Docker
+
+1. Instale as dependências do projeto com o comando:
+  ```bash
+  pip install -r requirements.txt
+```
+3. Configure as credenciais e a conexão com o banco de dados MySQL.
+4. Execute a aplicação Flask:
+   ```bash
+   python app.py
+   ```
